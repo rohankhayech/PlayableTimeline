@@ -15,7 +15,7 @@ public class TimelinePlayer<E extends TimelineEvent> implements Runnable {
     /** Timeline to play. */
     private final Timeline<E> tl;
 
-    /** Current playback position on the timeline in {@code unit} units. */
+    /** Current playback position on the timeline in {@code tl.unit} units. */
     private long playhead = 0;
 
     /** Iterator used for playback. */
