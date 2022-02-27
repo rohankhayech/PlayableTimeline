@@ -338,8 +338,8 @@ public class TimelinePlayer<E extends TimelineEvent> implements Runnable {
         @Override
         public void onTimelineChanged () {
             synchronized (mutex) {
-                iter = getIteratorAt(playhead);
                 clampPlayhead();
+                iter = getIteratorAt(playhead);
             }
         }
     };

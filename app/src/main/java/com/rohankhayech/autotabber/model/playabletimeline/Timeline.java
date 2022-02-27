@@ -4,8 +4,6 @@
 
 package com.rohankhayech.autotabber.model.playabletimeline;
 
-import com.rohankhayech.autotabber.model.guitartimeline.GuitarNoteEvent;
-
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -53,6 +51,8 @@ public class Timeline<E extends TimelineEvent>  {
         events.add(timeframe);
         Collections.sort(events);
 
+        notifyEventAdded(time);
+
         // Notify listeners if duration extended.
         if (getDuration() > oldDuration) {
             notifyDurationChanged(oldDuration);
@@ -70,6 +70,9 @@ public class Timeline<E extends TimelineEvent>  {
         for (TimelineFrame<E> tf : events) {
             if (tf.getEvent() == event) {
                 events.remove(tf);
+
+                notifyEventRemoved(tf.getTime());
+
                 // Notify listeners if duration extended.
                 if (getDuration() < oldDuration) {
                     notifyDurationChanged(oldDuration);
@@ -351,7 +354,6 @@ public class Timeline<E extends TimelineEvent>  {
         for (TimelineListener l : listeners) {
             l.beforeEventModified(event);
         }
-        notifyTimelineChanged();
     }
 
     /**
