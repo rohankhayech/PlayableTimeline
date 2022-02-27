@@ -4,6 +4,8 @@
 
 package com.rohankhayech.autotabber.model.playabletimeline;
 
+import com.rohankhayech.autotabber.model.guitartimeline.GuitarNoteEvent;
+
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -134,13 +136,19 @@ public class Timeline<E extends TimelineEvent>  {
      * Retrieves the first event placed at the specified timestamp.
      *
      * If multiple events are placed at the same timeframe this will return the event that was added
-     * to the timeline first. To retrieve all events at the specified timeframe call {@code getAll()}.
+     * to the timeline first. To retrieve all events at the specified timeframe call {@link Timeline#getAll}.
+     *
+     * <p>
+     * Note that if the returned event is modified in any way the class should call
+     * {@link Timeline#notifyBeforeEventModified} before modification and {@link Timeline#notifyEventModified}
+     * after modification to ensure all listeners can respond to the change.
+     * </p>
      *
      * @param timestamp The timestamp in {@code unit} units to retrieve events.
      * @return The first event placed at the specified timestamp, or {@code null} if no event is
      * present at the specified timeframe.
      *
-     * @see Timeline#getAll(long)
+     * @see Timeline#getAll
      */
     public E get(long timestamp) {
         for (TimelineFrame<E> tf : events) {
@@ -155,6 +163,13 @@ public class Timeline<E extends TimelineEvent>  {
 
     /**
      * Retrieves all events placed at the specified timestamp.
+     *
+     * <p>
+     * Note that if the returned events are modified in any way the class should call
+     * {@link Timeline#notifyBeforeEventModified} before modification and {@link Timeline#notifyEventModified}
+     * after modification to ensure all listeners can respond to the change.
+     * </p>
+     *
      * @param timestamp The timestamp in {@code unit} units to retrieve events.
      * @return A list of events placed at the specified timestamp.
      */
@@ -261,7 +276,7 @@ public class Timeline<E extends TimelineEvent>  {
     }
 
     /**
-     * Notifies all listeners that the timeline has been modified.
+     * Notifies all listeners that the timeline will be modified.
      *
      * @throws IllegalStateException If a listener needs to prevent the modification operation,
      * eg. during playback or iteration.
@@ -321,6 +336,32 @@ public class Timeline<E extends TimelineEvent>  {
     private void notifyDurationChanged(long oldDuration) {
         for (TimelineListener l : listeners) {
             l.onDurationChanged(oldDuration,getDuration());
+        }
+        notifyTimelineChanged();
+    }
+
+    /**
+     * Notifies all listeners that the specified event will be modified.
+     * This should be called by any external class that modifies an event returned from this timeline.
+     * @param event The event that was modified.
+     * @throws IllegalStateException If a listener needs to prevent the modification operation,
+     * eg. during playback or iteration.
+     */
+    public void notifyBeforeEventModified(TimelineEvent event) throws IllegalStateException {
+        for (TimelineListener l : listeners) {
+            l.beforeEventModified(event);
+        }
+        notifyTimelineChanged();
+    }
+
+    /**
+     * Notifies all listeners that the specified event was modified.
+     * This should be called by any external class that modifies an event returned from this timeline.
+     * @param event The event that was modified.
+     */
+    public void notifyEventModified(TimelineEvent event) {
+        for (TimelineListener l : listeners) {
+            l.onEventModified(event);
         }
         notifyTimelineChanged();
     }

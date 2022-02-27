@@ -47,6 +47,26 @@ public interface TimelineListener {
     default void onEventRemoved(long timestamp) {}
 
     /**
+     * May be called before an existing event is modified. This will be called by any internal
+     * function that modifies an event, however it cannot be guaranteed that this method will be
+     * called if an external class modifies an event.
+     *
+     * @param event The event that will be modified.
+     * @throws IllegalStateException If the listener needs to prevent the modification operation,
+     * eg. during playback or iteration.
+     */
+    default void beforeEventModified(TimelineEvent event) {}
+
+    /**
+     * May be called when an existing event is modified. This will be called by any internal
+     * function that modifies an event, however it cannot be guaranteed that this method will be
+     * called if an external class modifies an event.
+     *
+     * @param event The event that was be modified.
+     */
+    default void onEventModified(TimelineEvent event) {}
+
+    /**
      * Called when the duration of the timeline was extended or shortened.
      * @param oldDuration The previous duration of the timeline.
      * @param newDuration The current duration of the timeline.
