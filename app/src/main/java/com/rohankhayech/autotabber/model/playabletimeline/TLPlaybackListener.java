@@ -17,6 +17,12 @@ public interface TLPlaybackListener {
      * may delay playback must be executed in another thread.
      * @param playhead The current playback position of the timeline player.
      */
-    void onPlayheadUpdated(long playhead);
+    default void onPlayheadUpdated(long playhead) {}
+
+    /** Called when playback is started. */
+    default void onPlaybackStart() {}
+
+    /** Called when playback is paused or stopped. */
+    default void onPlaybackPaused() {}
 
 }

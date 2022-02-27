@@ -81,6 +81,7 @@ public class TimelinePlayer<E extends TimelineEvent> implements Runnable {
             synchronized (mutex) {
                 playing = true;
             }
+            notifyPlaybackStarted();
         } else {
             throw new IllegalStateException("Cannot start playback after player has been closed.");
         }
@@ -98,6 +99,7 @@ public class TimelinePlayer<E extends TimelineEvent> implements Runnable {
                     latency = 0;
                 }
                 thread.interrupt();
+                notifyPlaybackPaused();
             }
         } else {
             throw new IllegalStateException("Cannot start playback after player has been closed.");
@@ -289,6 +291,26 @@ public class TimelinePlayer<E extends TimelineEvent> implements Runnable {
     private void notifyPlayheadUpdated() {
         for (TLPlaybackListener l : listeners) {
             l.onPlayheadUpdated(playhead);
+        }
+    }
+
+
+    /**
+     * Notifies all listeners that playback has started.
+     */
+    private void notifyPlaybackStarted() {
+        for (TLPlaybackListener l : listeners) {
+            l.onPlaybackStart();
+        }
+    }
+
+
+    /**
+     * Notifies all listeners that playback has paused.
+     */
+    private void notifyPlaybackPaused() {
+        for (TLPlaybackListener l : listeners) {
+            l.onPlaybackPaused();
         }
     }
 
