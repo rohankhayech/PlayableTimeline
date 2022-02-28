@@ -97,6 +97,7 @@ public class TimelinePlayer<E extends TimelineEvent> implements Runnable {
                 synchronized (mutex) {
                     playing = false;
                     latency = 0;
+                    clampPlayhead();
                 }
                 thread.interrupt();
                 notifyPlaybackPaused();
