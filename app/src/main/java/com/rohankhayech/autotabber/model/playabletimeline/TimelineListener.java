@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Rohan Khayech
+ * Copyright (c) 2022 Rohan Khayech
  */
 
 package com.rohankhayech.autotabber.model.playabletimeline;
@@ -37,8 +37,9 @@ public interface TimelineListener {
     /**
      * Called when an event has been inserted into the timeline.
      * @param timestamp The timestamp at which the event was inserted.
+     * @param interval The time at which all subsequent events were delayed.
      */
-    default void onEventInserted(long timestamp) {}
+    default void onEventInserted(long timestamp, long interval) {}
 
     /**
      * Called when an event has been removed from the timeline.
@@ -51,20 +52,20 @@ public interface TimelineListener {
      * function that modifies an event, however it cannot be guaranteed that this method will be
      * called if an external class modifies an event.
      *
-     * @param event The event that will be modified.
+     * @param timestamp The timestamp at which the event was modified.
      * @throws IllegalStateException If the listener needs to prevent the modification operation,
      * eg. during playback or iteration.
      */
-    default void beforeEventModified(TimelineEvent event) {}
+    default void beforeEventModified(long timestamp) {}
 
     /**
      * May be called when an existing event is modified. This will be called by any internal
      * function that modifies an event, however it cannot be guaranteed that this method will be
      * called if an external class modifies an event.
      *
-     * @param event The event that was be modified.
+     * @param timestamp The timestamp at which the event was modified.
      */
-    default void onEventModified(TimelineEvent event) {}
+    default void onEventModified(long timestamp) {}
 
     /**
      * Called when the duration of the timeline was extended or shortened.

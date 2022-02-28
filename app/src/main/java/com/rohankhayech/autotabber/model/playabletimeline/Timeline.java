@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Rohan Khayech
+ * Copyright (c) 2022 Rohan Khayech
  */
 
 package com.rohankhayech.autotabber.model.playabletimeline;
@@ -51,12 +51,13 @@ public class Timeline<E extends TimelineEvent>  {
         events.add(timeframe);
         Collections.sort(events);
 
-        notifyEventAdded(time);
-
         // Notify listeners if duration extended.
         if (getDuration() > oldDuration) {
             notifyDurationChanged(oldDuration);
         }
+
+        // Notify listeners that the event was added.
+        notifyEventAdded(time);
     }
 
     /**
@@ -71,6 +72,7 @@ public class Timeline<E extends TimelineEvent>  {
             if (tf.getEvent() == event) {
                 events.remove(tf);
 
+                // Notify listeners the event was removed.
                 notifyEventRemoved(tf.getTime());
 
                 // Notify listeners if duration extended.
@@ -105,6 +107,9 @@ public class Timeline<E extends TimelineEvent>  {
         if (getDuration() > oldDuration) {
             notifyDurationChanged(oldDuration);
         }
+
+        // Notify listeners of insert.
+        notifyEventInserted(time,interval);
 
         // Add the inserted event.
         addEvent(event,time);
@@ -313,10 +318,11 @@ public class Timeline<E extends TimelineEvent>  {
     /**
      * Notifies all listeners that an event has been inserted into the timeline.
      * @param timestamp The timestamp at which the event was inserted.
+     * @param interval The time at which all subsequent events were delayed.
      */
-    private void notifyEventInserted(long timestamp) {
+    private void notifyEventInserted(long timestamp, long interval) {
         for (TimelineListener l : listeners) {
-            l.onEventInserted(timestamp);
+            l.onEventInserted(timestamp, interval);
         }
         notifyTimelineChanged();
     }
@@ -346,24 +352,24 @@ public class Timeline<E extends TimelineEvent>  {
     /**
      * Notifies all listeners that the specified event will be modified.
      * This should be called by any external class that modifies an event returned from this timeline.
-     * @param event The event that was modified.
      * @throws IllegalStateException If a listener needs to prevent the modification operation,
      * eg. during playback or iteration.
      */
-    public void notifyBeforeEventModified(TimelineEvent event) throws IllegalStateException {
+    public void notifyBeforeEventModified(long timestamp) throws IllegalStateException {
+
         for (TimelineListener l : listeners) {
-            l.beforeEventModified(event);
+            l.beforeEventModified(timestamp);
         }
+        notifyBeforeTimelineChanged();
     }
 
     /**
      * Notifies all listeners that the specified event was modified.
      * This should be called by any external class that modifies an event returned from this timeline.
-     * @param event The event that was modified.
      */
-    public void notifyEventModified(TimelineEvent event) {
+    public void notifyEventModified(long timestamp) {
         for (TimelineListener l : listeners) {
-            l.onEventModified(event);
+            l.onEventModified(timestamp);
         }
         notifyTimelineChanged();
     }
@@ -372,7 +378,7 @@ public class Timeline<E extends TimelineEvent>  {
     public String toString() {
         StringBuilder str = new StringBuilder("Timeline with Duration " + getDuration() + " " + unit.toString() + ":");
         for (TimelineFrame<E> e : events) {
-            str.append("\n\t").append(e.getTime()).append(" ").append(unit.toString()).append(": ").append(e.getEvent().toString());
+            str.append("\n\t").append(e.getTime()).append(" ").append(unit).append(": ").append(e.getEvent().toString());
         }
         return str.toString();
     }
