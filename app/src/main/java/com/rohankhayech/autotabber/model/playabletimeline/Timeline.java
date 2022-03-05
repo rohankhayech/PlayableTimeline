@@ -262,6 +262,17 @@ public class Timeline<E extends TimelineEvent>  {
         return events.listIterator(index);
     }
 
+    /**
+     * Creates a new timeline event with pre-initialised values specific to this timeline class.
+     * The returned event must have the event-specific values set and be added to this timeline manually.
+     * This method does not add any events to the timeline.
+     * @return A new timeline event with pre-initialised values specific to this timeline class.
+     * @throws UnsupportedOperationException If the Timeline class does not support the operation.
+     */
+    public E createNewEvent() throws UnsupportedOperationException {
+        throw new UnsupportedOperationException("createNewEvent() is not implemented on this Timeline class.");
+    }
+
     // Listener Notification
 
     /**
