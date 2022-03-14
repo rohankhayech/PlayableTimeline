@@ -226,7 +226,7 @@ public class TimelinePlayer<E extends TimelineEvent> implements Runnable {
                                 while (iter.hasNext() && playhead == iter.peek().getTime()) {
                                     // Trigger the event.
                                     TimelineFrame<E> event = iter.next();
-                                    event.trigger();
+                                    triggerEvent(event);
                                 }
                             } else {
                                 pause(); //Stop playback if there are no more events.
@@ -254,6 +254,14 @@ public class TimelinePlayer<E extends TimelineEvent> implements Runnable {
                 }
             }
         } catch (InterruptedException e) { /*exit thread*/ }
+    }
+
+    /**
+     * Triggers the specified event.
+     * @param event The event to trigger.
+     */
+    protected void triggerEvent(TimelineFrame<E> event) {
+        event.trigger();
     }
 
     /**
