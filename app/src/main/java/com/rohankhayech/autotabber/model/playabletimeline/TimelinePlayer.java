@@ -220,7 +220,7 @@ public class TimelinePlayer<E extends TimelineEvent> implements Runnable {
                     try {
                         long startTime = System.nanoTime();
                         synchronized (mutex) {
-                            System.out.println("Playing - "+playhead+" "+tl.getUnit().toString());
+                            //System.out.println("Playing - "+playhead+" "+tl.getUnit().toString());
                             if (iter.hasNext()) {
                                 // Check if the next event is scheduled to be played at the current timeframe.
                                 while (iter.hasNext() && playhead == iter.peek().getTime()) {
