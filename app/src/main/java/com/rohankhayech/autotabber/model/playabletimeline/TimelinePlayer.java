@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Rohan Khayech
+ * Copyright (c) 2022 Rohan Khayech
  */
 
 package com.rohankhayech.autotabber.model.playabletimeline;
@@ -344,4 +344,10 @@ public class TimelinePlayer<E extends TimelineEvent> implements Runnable {
             }
         }
     };
+
+    public long getLatency() {
+        synchronized (mutex) {
+            return latency;
+        }
+    }
 }
