@@ -210,7 +210,8 @@ public class TimelinePlayer<E extends TimelineEvent> implements Runnable {
     /**
      * Runs the timeline thread, allowing playback if currently playing.
      *
-     * This method should not be called directly, call init() to run the timeline thread.
+     * This method should not be called directly, the timeline thread will run on instantiation
+     * of the timeline player.
      */
     @Override
     public void run() {
