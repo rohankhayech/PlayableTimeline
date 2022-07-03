@@ -103,7 +103,7 @@ public class TimelinePlayer<E extends TimelineEvent> implements Runnable {
                 notifyPlaybackPaused();
             }
         } else {
-            throw new IllegalStateException("Cannot start playback after player has been closed.");
+            throw new IllegalStateException("Cannot pause playback after player has been closed.");
         }
     }
 
