@@ -31,7 +31,7 @@ public class TimelinePlayer<E extends TimelineEvent> implements Runnable {
     private boolean shutdown = false;
 
     /** Mutex lock for the accessing of variables. */
-    private static final Object mutex = new Object();
+    private final Object mutex = new Object();
 
     /** Extra latency to be accounted for in the next timeframe (in ns). */
     private long latency = 0;
