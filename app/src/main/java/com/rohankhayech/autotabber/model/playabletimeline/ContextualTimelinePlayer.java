@@ -14,7 +14,7 @@ package com.rohankhayech.autotabber.model.playabletimeline;
  *
  * @author Rohan Khayech
  */
-public class ContextualTimelinePlayer<E extends ContextualTimelineEvent<C>,C> extends TimelinePlayer<E> {
+public final class ContextualTimelinePlayer<E extends ContextualTimelineEvent<C>,C> extends TimelinePlayer<E> {
 
     /**
      * The object providing the required context for playback.

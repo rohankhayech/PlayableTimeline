@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Rohan Khayech
+ * Copyright (c) 2022 Rohan Khayech
  */
 
 package com.rohankhayech.autotabber.model.playabletimeline;
@@ -9,7 +9,7 @@ package com.rohankhayech.autotabber.model.playabletimeline;
  * 
  * @author Rohan Khayech
  */
-class TimelineFrame<E extends TimelineEvent> implements Comparable<TimelineFrame<E>> {
+final class TimelineFrame<E extends TimelineEvent> implements Comparable<TimelineFrame<E>> {
     /** The timeline event to be triggered. */
     private final E event;
     /** The time at which the event should be triggered. */
@@ -47,7 +47,7 @@ class TimelineFrame<E extends TimelineEvent> implements Comparable<TimelineFrame
      * timeline.
      * @param time The time at which the event should be triggered.
      */
-    protected void setTime(long time) {
+    void setTime(long time) {
         this.time = time;
     }
 
