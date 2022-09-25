@@ -18,7 +18,7 @@ package com.rohankhayech.autotabber.model.playabletimeline;
  * @param <C> A type of object that provides contextual information/objects required at runtime for playback.
  *            Eg. An output device or activity context.
  */
-public interface ContextualTimelineEvent<C> extends TimelineEvent{
+public interface ContextualTimelineEvent<C> extends TimelineEvent {
 
     /**
      * Called when the node is played on a timeline by a regular {@code TimelinePlayer}.

@@ -1,11 +1,13 @@
 /*
- * Copyright (c) 2021 Rohan Khayech
+ * Copyright (c) 2022 Rohan Khayech
  */
 
 package com.rohankhayech.autotabber.model.playabletimeline;
 
 /**
  * Test event class that displays a message when triggered.
+ *
+ * @author Rohan Khayech
  */
 public class MessageEvent implements TimelineEvent {
 
