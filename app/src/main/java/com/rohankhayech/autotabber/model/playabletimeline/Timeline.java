@@ -386,6 +386,16 @@ public class Timeline<E extends TimelineEvent>  {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        Timeline<?> o = (Timeline<?>)obj;
+        return unit.equals(o.unit)
+            && events.equals(o.events);
+    }
+
+    @Override
     public String toString() {
         StringBuilder str = new StringBuilder("Timeline with Duration " + getDuration() + " " + unit.toString() + ":");
         for (TimelineFrame<E> e : events) {

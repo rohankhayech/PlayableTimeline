@@ -56,6 +56,16 @@ final class TimelineFrame<E extends TimelineEvent> implements Comparable<Timelin
         event.trigger();
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (!(obj instanceof TimelineFrame)) return false;
+
+        TimelineFrame<?> o = (TimelineFrame<?>)obj;
+        return time == o.time
+            && event.equals(o.event);
+    }
+
     /**
      * Compares the time of this timeline frame to that of the specified timeline frame.
      * @param o The other timeline frame to compare.
