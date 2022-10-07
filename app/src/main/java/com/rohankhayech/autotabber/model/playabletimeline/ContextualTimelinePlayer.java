@@ -8,11 +8,11 @@ package com.rohankhayech.autotabber.model.playabletimeline;
  * A timeline player that allows a context object to be passed in when triggering events to facilitate
  * playback.
  *
+ * @author Rohan Khayech
+ *
  * @param <E> The type of timeline events the player can play.
  * @param <C> A type of object that provides contextual information/objects required at runtime for playback.
  *            Eg. An output device or activity context.
- *
- * @author Rohan Khayech
  */
 public final class ContextualTimelinePlayer<E extends ContextualTimelineEvent<C>,C> extends TimelinePlayer<E> {
 

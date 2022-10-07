@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Rohan Khayech
+ * Copyright (c) 2022 Rohan Khayech
  */
 
 package com.rohankhayech.autotabber.model.playabletimeline;
@@ -10,8 +10,10 @@ import java.util.concurrent.TimeUnit;
  * The Timeline Set class represents a playable timeline of events where events are placed at a specific timeframe along the timeline.
  * Additionally, it restricts the base Timeline class by only allowing one event to be placed at each timestamp.
  *
- * @param <E> Type of events the timeline holds.
  * @author Rohan Khayech
+ *
+ * @param <E> Type of events the timeline holds.
+
  */
 public class TimelineSet<E extends TimelineEvent> extends Timeline<E> {
 

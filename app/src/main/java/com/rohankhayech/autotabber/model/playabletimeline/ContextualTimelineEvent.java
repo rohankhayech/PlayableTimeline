@@ -15,8 +15,11 @@ package com.rohankhayech.autotabber.model.playabletimeline;
  * a regular {@code TimelinePlayer} however the default implementation is to throw an {@code UnsupportedOperationException}.
  * </p>
  *
+ * @author Rohan Khayech
+ *
  * @param <C> A type of object that provides contextual information/objects required at runtime for playback.
  *            Eg. An output device or activity context.
+ *
  */
 public interface ContextualTimelineEvent<C> extends TimelineEvent {
 

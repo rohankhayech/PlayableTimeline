@@ -10,6 +10,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * The TimelinePlayer class handles playback of {@link Timeline} data structures.
+ * When playback is started, each event in the timeline will be triggered at it's specified time.
+ *
+ * @author Rohan Khayech
+ *
+ * @param <E> The type of events contained in the timeline.
+ */
 public class TimelinePlayer<E extends TimelineEvent> implements Runnable {
     
     /** Timeline to play. */
@@ -356,6 +364,8 @@ public class TimelinePlayer<E extends TimelineEvent> implements Runnable {
         }
     };
 
+
+    /** @return The current playback latency of this player. This will be zero if not currently playing. */
     public long getLatency() {
         synchronized (mutex) {
             return latency;

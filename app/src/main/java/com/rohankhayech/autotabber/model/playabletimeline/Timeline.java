@@ -13,8 +13,8 @@ import java.util.concurrent.TimeUnit;
 /**
  * The Timeline class represents a playable timeline of events where events are placed at a specific timeframe along the timeline.
  *
- * @param <E> Type of events the timeline holds.
  * @author Rohan Khayech
+ * @param <E> Type of events the timeline holds.
  */
 public class Timeline<E extends TimelineEvent>  {
 
@@ -369,7 +369,6 @@ public class Timeline<E extends TimelineEvent>  {
      * eg. during playback or iteration.
      */
     public void notifyBeforeEventModified(long timestamp) throws IllegalStateException {
-
         for (TimelineListener l : listeners) {
             l.beforeEventModified(timestamp);
         }
