@@ -47,6 +47,8 @@ public class TimelineTest {
     /** Number of default test events. */
     private static final int NUM_EVENTS = 3;
 
+    private TimelineListener l;
+
     @Before
     public void setUp() {
         // Setup timeline.
@@ -63,7 +65,7 @@ public class TimelineTest {
         }
 
         // Setup listener
-        tl.addListener(new TimelineListener() {
+        l = tl.addListener(new TimelineListener() {
             @Override public void beforeTimelineChanged() { notifiedBeforeTLChanged = true; }
             @Override public void onTimelineChanged() { notifiedTLChanged = true; }
             @Override public void onEventAdded(long t) { notifiedEventAdded = true; }
@@ -87,6 +89,7 @@ public class TimelineTest {
 
     @After
     public void tearDown() {
+        tl.removeListener(l);
     }
 
     @Test
@@ -135,7 +138,7 @@ public class TimelineTest {
     }
 
     @Test
-    public void insertAndDelay() {
+    public void testInsertAndDelay() {
         addDefaultEvents();
 
         // Test insert event at unique timeframe.
@@ -177,7 +180,7 @@ public class TimelineTest {
     }
 
     @Test
-    public void getEvents() {
+    public void testGetEvents() {
         // Check empty list.
         assertEquals("Returns non-empty list when timeline empty.", 0, tl.getEvents().size());
 
