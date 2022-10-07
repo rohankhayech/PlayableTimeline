@@ -65,6 +65,8 @@ public class Timeline<E extends TimelineEvent>  {
      * @param event The timeline event to remove.
      */
     public void removeEvent(E event) {
+        notifyBeforeTimelineChanged();
+
         // Keep track of the old duration.
         long oldDuration = getDuration();
 
