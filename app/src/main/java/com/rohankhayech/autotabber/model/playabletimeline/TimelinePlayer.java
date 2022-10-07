@@ -67,17 +67,20 @@ public class TimelinePlayer<E extends TimelineEvent> implements Runnable {
         thread = new Thread(this);
         thread.start();
     }
+
     /**
-     * Closes the playback thread.
+     * Closes the playback thread. Subsequent calls to this method will have no effect.
      */
     public void close() {
-        synchronized (mutex) {
-            shutdown = true;
-        }
-        thread.interrupt();
-        thread = null;
+        if (thread != null) {
+            synchronized (mutex) {
+                shutdown = true;
+            }
+            thread.interrupt();
+            thread = null;
 
-        tl.removeListener(tlListener);
+            tl.removeListener(tlListener);
+        }
     }
 
     /** @return The timeline that this player is attached to.*/
@@ -127,19 +130,18 @@ public class TimelinePlayer<E extends TimelineEvent> implements Runnable {
     }
 
     /**
-     * Stops the timeline playing and resets the playhead to the start.
+     * Pauses the timeline and resets the playhead to the start.
      */
     public void stop() {
         resetPlayback();
     }
 
     /**
-     * Resets the playhead to zero and returns a new iterator from the start of the timeline.
+     * Scrubs to the start of the timeline.
      */
     private void resetPlayback() {
         synchronized (mutex) {
             scrub(0);
-            iter = new PeekingIterator<>(tl.getEvents().listIterator(0));
         }
     }
 

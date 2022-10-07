@@ -16,21 +16,35 @@ import org.junit.Test;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * Test harness for the TimelinePlayer class.
+ *
+ * @author Rohan Khayech
+ */
 public class TimelinePlayerTest {
 
+    /** The timeline to test playback on. */
     private Timeline<TimelineEvent> tl;
+
+    /** The timeline player to test. */
     private TimelinePlayer<TimelineEvent> plr;
+
+    /** Test listener to check callbacks. */
     private TLPlaybackListener l;
 
     /** Listener callback checks. */
     private volatile boolean playheadUpdatedCalled, playbackStartCalled, playbackPausedCalled;
 
+    /** Array of test events. */
     private TimelineEvent[] e;
+
+    /** Array of flags indicating whether the respective event has been triggered. */
     private AtomicBoolean[] triggered;
 
     /** Delay between test events. */
     private static final long EVENT_DELAY = 10;
 
+    /** Number of test events. */
     private static final int NUM_EVENTS = 3;
 
     @Before
@@ -109,10 +123,59 @@ public class TimelinePlayerTest {
         // Assert playback stopped at end of timeline.
         assertFalse("Playback continued after last event.",plr.isPlaying());
         assertEquals("Playhead not at last event after end of timeline.", 20, plr.getPlayhead());
+
+        // Attempt play after close.
+        plr.close();
+        assertThrows(IllegalStateException.class,() -> plr.play());
+    }
+
+    // TODO: Add more playback test cases.
+
+    @Test
+    public void testPause() throws InterruptedException {
+        // Test pause when not playing.
+        plr.pause();
+        assertFalse("Additional notification of pause when already paused.", playbackPausedCalled);
+        assertFalse("Player started playing after pause.", plr.isPlaying());
+
+        // Test pause while playing.
+        plr.play();
+        plr.pause();
+        assertTrue("Additional notification of pause when already paused.", playbackPausedCalled);
+        assertFalse("Player still playing after pause.", plr.isPlaying());
+
+        // Check events haven't been triggered.
+        Thread.sleep(EVENT_DELAY);
+        assertFalse("Event played after pause.",triggered[1].get());
+
+        // Attempt pause after closing.
+        plr.close();
+        assertThrows(IllegalStateException.class,() -> plr.pause());
     }
 
     @Test
-    public void testPause() {
+    public void testStart() throws InterruptedException {
+        // Move playhead away from start.
+        plr.scrub(EVENT_DELAY/2);
+
+        // Test start.
+        plr.start();
+
+        // Check playing and first event triggered.
+        assertTrue("Player not playing after start.", plr.isPlaying());
+        Thread.sleep(2);
+        assertTrue("Event at start of tl not triggered.", triggered[0].get());
+    }
+
+    @Test
+    public void testStop() {
+        // Test stop.
+        plr.play();
+        plr.stop();
+
+        // Check playback has stopped and playhead is at zero.
+        assertFalse("Player still playing after stop.", plr.isPlaying());
+        assertEquals("Playhead not at zero after stop.", 0,plr.getPlayhead());
     }
 
     @Test
@@ -143,19 +206,10 @@ public class TimelinePlayerTest {
     public void testModificationDuringPlayback() {
         // Attempt modification during playback.
         plr.start();
-        assertThrows("Timeline modified during playback.",IllegalStateException.class, () -> tl.addEvent(e[0],0));
-        assertThrows("Timeline modified during playback.",IllegalStateException.class, () -> tl.removeEvent(e[0]));
+        assertThrows("Timeline modified during playback.", IllegalStateException.class, () -> tl.addEvent(e[0],0));
+        assertThrows("Timeline modified during playback.", IllegalStateException.class, () -> tl.removeEvent(e[0]));
         plr.stop();
     }
 
-    // Helper Methods
-
-    /**
-     * Resets the triggered status of all events.
-     */
-    private void resetTriggered(){
-        for (AtomicBoolean t : triggered) {
-            t.set(false);
-        }
-    }
+    // TODO: Add latency handling / blocking event test.
 }
