@@ -72,11 +72,15 @@ public class TimelinePlayer<E extends TimelineEvent> implements Runnable {
         tl.removeListener(tlListener);
     }
 
+    /** @return The timeline that this player is attached to.*/
+    public Timeline<E> getTimeline() {
+        return tl;
+    }
+
     /**
      * Plays the timeline from the current position.
      */
     public void play() {
-        System.out.println("Play");
         if (thread != null) {
             synchronized (mutex) {
                 playing = true;
@@ -91,7 +95,6 @@ public class TimelinePlayer<E extends TimelineEvent> implements Runnable {
      * Pauses the timeline at the current position.
      */
     public void pause() {
-        System.out.println("Pause");
         if (thread != null) {
             if (playing) {
                 synchronized (mutex) {
@@ -111,7 +114,6 @@ public class TimelinePlayer<E extends TimelineEvent> implements Runnable {
      * Starts the timeline playing from the beginning.
      */
     public void start() {
-        System.out.println("Start");
         resetPlayback();
         play();
     }
@@ -120,7 +122,6 @@ public class TimelinePlayer<E extends TimelineEvent> implements Runnable {
      * Stops the timeline playing and resets the playhead to the start.
      */
     public void stop() {
-        System.out.println("Stop");
         resetPlayback();
     }
 
@@ -145,7 +146,7 @@ public class TimelinePlayer<E extends TimelineEvent> implements Runnable {
     }
 
     /**
-     * Sets the playhead position to the specified time.
+     * Pauses playback and sets the playhead position to the specified time.
      * @param time The time position to scrub to (in units specified by the timeline).
      * @param notify Boolean flag indicating whether to notify listeners of the updated playhead
      * position. This should only be set to {@code false} if the calling class is the only listener.
@@ -165,7 +166,7 @@ public class TimelinePlayer<E extends TimelineEvent> implements Runnable {
     }
 
     /**
-     * Sets the playhead position to the specified time.
+     * Pauses playback and sets the playhead position to the specified time.
      * @param time The time position to scrub to (in units specified by the timeline).
      */
     public void scrub(long time) {
@@ -176,7 +177,9 @@ public class TimelinePlayer<E extends TimelineEvent> implements Runnable {
      * @return Current playback position on the timeline in {@code unit} units.
      */
     public long getPlayhead() {
-        return playhead;
+        synchronized (mutex) {
+            return playhead;
+        }
     }
 
     /**
@@ -221,7 +224,6 @@ public class TimelinePlayer<E extends TimelineEvent> implements Runnable {
                     try {
                         long startTime = System.nanoTime();
                         synchronized (mutex) {
-                            //System.out.println("Playing - "+playhead+" "+tl.getUnit().toString());
                             if (iter.hasNext()) {
                                 // Check if the next event is scheduled to be played at the current timeframe.
                                 while (iter.hasNext() && playhead == iter.peek().getTime()) {

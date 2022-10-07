@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022 Rohan Khayech
+ */
+
 package com.rohankhayech.autotabber.model.playabletimeline;
 
 /** The timeline event interface represents an event that can be triggered when played on a timeline.
@@ -12,7 +16,4 @@ public interface TimelineEvent {
      * may delay playback must be executed in another thread.
      */
     void trigger();
-
-    //** Called when the node is hovered over by the playhead on a paused timeline. */
-    //void onHover();
 }
