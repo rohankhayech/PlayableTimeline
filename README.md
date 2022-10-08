@@ -22,6 +22,7 @@ Timeline<TimelineEvent> timeline = new Timeline<>(TimeUnit.SECONDS);
 Adding an event is then as easy as specifying the time to place it at and defining a lamda to be executed when the event is triggered:
 
 ```java
+// Add an event using lamda syntax.
 timeline.addEvent(1, () -> {
     System.out.println("Hello world.");
 });
