@@ -55,8 +55,7 @@ public class TimelineTest {
     /** Test events */
     private final TimelineEvent dupeEvent = new MessageEvent("Duplicate message at 2 secs.");
     private final TimelineEvent halfEvent = new MessageEvent("Message at 1 sec.");
-    private final TimelineEvent extraEvent = new MessageEvent("Message at 3 secs.");
-
+    
     /** Delay between test events. */
     private static final long EVENT_DELAY = 2;
 

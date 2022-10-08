@@ -37,6 +37,7 @@ package com.rohankhayech.playabletimeline;
  *            Eg. An output device or activity context.
  *
  */
+@FunctionalInterface
 public interface ContextualTimelineEvent<C> extends TimelineEvent {
 
     /**

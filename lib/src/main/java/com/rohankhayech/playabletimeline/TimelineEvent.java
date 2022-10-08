@@ -24,6 +24,7 @@ package com.rohankhayech.playabletimeline;
  * 
  * @author Rohan Khayech
  */
+@FunctionalInterface
 public interface TimelineEvent {
 
     /**
