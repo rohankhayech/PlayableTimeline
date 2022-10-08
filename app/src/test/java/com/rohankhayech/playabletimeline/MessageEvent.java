@@ -2,7 +2,7 @@
  * Copyright (c) 2022 Rohan Khayech
  */
 
-package com.rohankhayech.autotabber.model.playabletimeline;
+package com.rohankhayech.playabletimeline;
 
 /**
  * Test event class that displays a message when triggered.

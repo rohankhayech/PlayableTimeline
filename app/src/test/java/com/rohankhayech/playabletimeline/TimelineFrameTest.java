@@ -2,7 +2,7 @@
  * Copyright (c) 2022 Rohan Khayech
  */
 
-package com.rohankhayech.autotabber.model.playabletimeline;
+package com.rohankhayech.playabletimeline;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;

@@ -2,7 +2,7 @@
  * Copyright (c) 2022 Rohan Khayech
  */
 
-package com.rohankhayech.autotabber.model.playabletimeline;
+package com.rohankhayech.playabletimeline;
 
 /**
  * A timeline player that allows a context object to be passed in when triggering events to facilitate

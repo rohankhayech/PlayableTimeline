@@ -1,8 +1,8 @@
 /*
- * Copyright (c) 2021 Rohan Khayech
+ * Copyright (c) 2022 Rohan Khayech
  */
 
-package com.rohankhayech.autotabber.model.playabletimeline;
+package com.rohankhayech.playabletimeline;
 
 /**
  * The timeline playback listener handles playback events from a timeline player.

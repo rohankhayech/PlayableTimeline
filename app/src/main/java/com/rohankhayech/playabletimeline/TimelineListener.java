@@ -2,7 +2,7 @@
  * Copyright (c) 2022 Rohan Khayech
  */
 
-package com.rohankhayech.autotabber.model.playabletimeline;
+package com.rohankhayech.playabletimeline;
 
 /**
  * The timeline listener handles modification events from a timeline.
