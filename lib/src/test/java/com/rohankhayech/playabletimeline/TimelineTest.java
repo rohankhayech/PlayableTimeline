@@ -80,9 +80,9 @@ public class TimelineTest {
      */
     private void addDefaultEvents() {
         // Add the events in non-chronological order to test sorting.
-        tl.addEvent(e[2], EVENT_DELAY * 2);
-        tl.addEvent(e[0], 0);
-        tl.addEvent(e[1], EVENT_DELAY);
+        tl.addEvent(EVENT_DELAY * 2, e[2]);
+        tl.addEvent(0, e[0]);
+        tl.addEvent(EVENT_DELAY, e[1]);
 
         resetListenerNotifications();
     }
@@ -104,7 +104,7 @@ public class TimelineTest {
 
         // Test add event.
         TimelineEvent e = () -> {};
-        tl.addEvent(e, EVENT_DELAY/2);
+        tl.addEvent(EVENT_DELAY/2, e);
         assertEquals("Event not added at specified time.", e, tl.get(EVENT_DELAY/2));
 
         // Check listener notifications.
@@ -114,7 +114,7 @@ public class TimelineTest {
         assertFalse("False notification of duration change.",notifiedDurationChanged);
 
         // Check duration notification.
-        tl.addEvent(e, EVENT_DELAY*3);
+        tl.addEvent(EVENT_DELAY*3, e);
         assertTrue("No notification of duration.",notifiedDurationChanged);
     }
 
@@ -203,7 +203,7 @@ public class TimelineTest {
         assertNull("Returns event when timestamp is not present.", tl.get(1));
 
         // Check first event returned.
-        tl.addEvent(dupeEvent,2);
+        tl.addEvent(2, dupeEvent);
         assertEquals("Correct event not returned.", e[1], tl.get(2));
     }
 
@@ -217,7 +217,7 @@ public class TimelineTest {
         assertEquals("Returns non-empty list when timestamp is not present.", 0, tl.getAll(1).size());
 
         // Check all events returned.
-        tl.addEvent(dupeEvent,2);
+        tl.addEvent(2, dupeEvent);
         List<TimelineEvent> events = tl.getAll(2);
         assertEquals("Returned list has incorrect num of events.", 2, tl.getAll(2).size());
         assertTrue("Correct events not returned.", events.contains(e[1]));
@@ -274,11 +274,11 @@ public class TimelineTest {
 
         // Assert tl w/ different events not equal.
         Timeline<TimelineEvent> tl2 = new Timeline<>(TimeUnit.SECONDS);
-        tl2.addEvent(e[0],0);
+        tl2.addEvent(0, e[0]);
         assertNotEquals("Timelines are equal despite different events.",tl2,tl);
 
         // Check reciprocal equality.
-        tl.addEvent(e[0],0);
+        tl.addEvent(0, e[0]);
         assertEquals("Timelines should be equal.",tl,tl2);
         assertEquals("Timelines should be equal.",tl2,tl);
     }

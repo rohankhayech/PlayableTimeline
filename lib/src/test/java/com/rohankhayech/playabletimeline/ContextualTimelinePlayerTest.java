@@ -40,7 +40,7 @@ public class ContextualTimelinePlayerTest {
         plr = new ContextualTimelinePlayer<>(tl, context);
 
         // Add an event that accesses context object to retrieve and set the updated value.
-        tl.addEvent(c -> value = c.value,0);
+        tl.addEvent(0, c -> value = c.value);
     }
 
     @After

@@ -19,10 +19,10 @@ final class TimelineFrame<E extends TimelineEvent> implements Comparable<Timelin
      * Constructs a new timeline frame containing the specified event at the specified time.
      * Should only be constructed by a Timeline object or subclass of Timeline.
      *
-     * @param event The timeline event to be triggered.
      * @param time The time at which the event should be triggered, in the timeline's specified units.
+     * @param event The timeline event to be triggered.
      */
-    TimelineFrame(E event, long time) {
+    TimelineFrame(long time, E event) {
         this.event = event;
         this.time = time;
     }

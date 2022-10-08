@@ -37,17 +37,17 @@ public class Timeline<E extends TimelineEvent>  {
 
     /**
      * Places an event on the timeline at the specified time.
-     * @param event The timeline event to be triggered when the specified time is reached.
      * @param time The time at which the event should be triggered, in the timeline's specified units.
+     * @param event The timeline event to be triggered when the specified time is reached.
      */
-    public void addEvent(E event, long time) {
+    public void addEvent(long time, E event) {
         notifyBeforeTimelineChanged();
 
         // Keep track of the old duration.
         long oldDuration = getDuration();
 
         //Create a timeframe with the event.
-        TimelineFrame<E> timeframe = new TimelineFrame<>(event, time);
+        TimelineFrame<E> timeframe = new TimelineFrame<>(time, event);
         events.add(timeframe);
         Collections.sort(events);
 
@@ -114,7 +114,7 @@ public class Timeline<E extends TimelineEvent>  {
         notifyEventInserted(time,interval);
 
         // Add the inserted event.
-        addEvent(event,time);
+        addEvent(time, event);
     }
 
     /**
@@ -131,7 +131,7 @@ public class Timeline<E extends TimelineEvent>  {
         if (existsAt(time)) {
             insertAndDelay(event, time, interval);
         } else {
-            addEvent(event, time);
+            addEvent(time, event);
         }
     }
 

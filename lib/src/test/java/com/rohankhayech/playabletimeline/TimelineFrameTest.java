@@ -29,7 +29,7 @@ public class TimelineFrameTest {
     @Before
     public void setUp() {
         value = 0;
-        frame = new TimelineFrame<>(event,0);
+        frame = new TimelineFrame<>(0, event);
     }
 
     @Test
@@ -58,15 +58,15 @@ public class TimelineFrameTest {
     @Test
     public void testEquals() {
         // Check different event not equal.
-        TimelineFrame<TimelineEvent> f2 = new TimelineFrame<>(()->{},0);
+        TimelineFrame<TimelineEvent> f2 = new TimelineFrame<>(0, ()->{});
         assertNotEquals("TimelineFrames are equal despite different events.", f2, frame);
 
         // Check different time not equal.
-        f2 = new TimelineFrame<>(event,1);
+        f2 = new TimelineFrame<>(1, event);
         assertNotEquals("TimelineFrames are equal despite different times.", f2, frame);
 
         // Check reciprocal equality
-        f2 = new TimelineFrame<>(event,0);
+        f2 = new TimelineFrame<>(0, event);
         assertEquals("TimelineFrames should be equal.", f2, frame);
         assertEquals("TimelineFrames should be equal.", frame, f2);
     }
@@ -74,10 +74,10 @@ public class TimelineFrameTest {
     @Test
     public void testCompareTo() {
         // Equal timestamp.
-        TimelineFrame<TimelineEvent> f2 = new TimelineFrame<>(event,0);
+        TimelineFrame<TimelineEvent> f2 = new TimelineFrame<>(0, event);
         assertEquals("compareTo() should return 0 for frames with equal timestamps.", 0, frame.compareTo(f2));
 
-        f2 = new TimelineFrame<>(event,1);
+        f2 = new TimelineFrame<>(1, event);
 
         // Lesser timestamp
         assertEquals("compareTo() should return -1 for a frame with lesser timestamp.", -1, frame.compareTo(f2));

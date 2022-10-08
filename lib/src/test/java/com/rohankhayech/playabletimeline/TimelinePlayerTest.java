@@ -63,7 +63,7 @@ public class TimelinePlayerTest {
             final int j = i;
             triggered[i] = new AtomicBoolean(false);
             e[i] = () -> triggered[j].set(true);
-            tl.addEvent(e[i], i*EVENT_DELAY);
+            tl.addEvent(i*EVENT_DELAY, e[i]);
         }
 
         // Setup player
@@ -206,7 +206,7 @@ public class TimelinePlayerTest {
     public void testModificationDuringPlayback() {
         // Attempt modification during playback.
         plr.start();
-        assertThrows("Timeline modified during playback.", IllegalStateException.class, () -> tl.addEvent(e[0],0));
+        assertThrows("Timeline modified during playback.", IllegalStateException.class, () -> tl.addEvent(0, e[0]));
         assertThrows("Timeline modified during playback.", IllegalStateException.class, () -> tl.removeEvent(e[0]));
         plr.stop();
     }

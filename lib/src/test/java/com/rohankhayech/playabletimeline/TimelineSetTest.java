@@ -30,10 +30,10 @@ public class TimelineSetTest {
     @Test
     public void testAddDuplicateEvent() {
         // Add event at a unique timestamp.
-        tl.addEvent(()->{},1);
+        tl.addEvent(1, ()->{});
         assertTrue(tl.existsAt(1));
 
         // Attempt to add additional event at the same timestamp.
-        assertThrows(IllegalArgumentException.class, ()->tl.addEvent(()->{},1));
+        assertThrows(IllegalArgumentException.class, ()->tl.addEvent(1, ()->{}));
     }
 }

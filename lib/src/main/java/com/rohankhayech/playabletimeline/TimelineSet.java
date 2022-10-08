@@ -29,16 +29,16 @@ public class TimelineSet<E extends TimelineEvent> extends Timeline<E> {
     /**
      * Places an event on the timeline at the specified time.
      *
-     * @param event The timeline event to be triggered when the specified time is reached.
      * @param time  The time at which the event should be triggered, in the timeline's specified units.
+     * @param event The timeline event to be triggered when the specified time is reached.
      * @throws IllegalArgumentException If an event already exists at the specified timestamp.
      */
     @Override
-    public void addEvent(E event, long time) {
+    public void addEvent(long time, E event) {
         if (existsAt(time)) {
             throw new IllegalArgumentException("Cannot add more than one event at the specified timeframe.");
         } else {
-            super.addEvent(event, time);
+            super.addEvent(time, event);
         }
     }
 }
