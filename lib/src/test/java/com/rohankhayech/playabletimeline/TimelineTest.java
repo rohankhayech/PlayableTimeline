@@ -158,7 +158,7 @@ public class TimelineTest {
         addDefaultEvents();
 
         // Test insert event at unique timeframe.
-        tl.insertAndDelay(halfEvent,EVENT_DELAY/2, EVENT_DELAY);
+        tl.insertAndDelay(EVENT_DELAY/2, EVENT_DELAY, halfEvent);
         assertEquals("Event not added at specified time.", halfEvent ,tl.get(EVENT_DELAY/2));
 
         // Check existing subsequent events have moved.
@@ -177,7 +177,7 @@ public class TimelineTest {
     public void testInsert() {
         addDefaultEvents();
         // Test insert event at unique timeframe.
-        tl.insert(halfEvent,EVENT_DELAY/2, EVENT_DELAY);
+        tl.insert(EVENT_DELAY/2, EVENT_DELAY, halfEvent);
         assertEquals("Event not added at specified time.", halfEvent ,tl.get(EVENT_DELAY/2));
 
         // Check existing events haven't moved.
@@ -186,7 +186,7 @@ public class TimelineTest {
         assertEquals("Existing event moved by unique insert.", e[2], tl.get(EVENT_DELAY*2)); // After
 
         // Test insert event at unique timeframe.
-        tl.insert(dupeEvent,EVENT_DELAY, EVENT_DELAY);
+        tl.insert(EVENT_DELAY, EVENT_DELAY, dupeEvent);
         assertEquals("Event not added at specified time.", dupeEvent ,tl.get(EVENT_DELAY));
 
         // Check existing subsequent events have moved.
