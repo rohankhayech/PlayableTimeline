@@ -104,11 +104,11 @@ public class Timeline<E extends TimelineEvent>  {
 
     /**
      * Inserts an event on the timeline at the specified time, delaying all subsequent events by the specified interval.
-     * @param event The timeline event to be triggered when the specified time is reached.
      * @param time The time at which the event should be triggered, in the timeline's specified units.
      * @param interval The time to delay all subsequent events, in the timeline's specified units.
+     * @param event The timeline event to be triggered when the specified time is reached.
      */
-    public void insertAndDelay(E event, long time, long interval){
+    public void insertAndDelay(long time, long interval, E event){
         notifyBeforeTimelineChanged();
 
         // Keep track of the old duration.
@@ -137,15 +137,15 @@ public class Timeline<E extends TimelineEvent>  {
      * Inserts an event on the timeline at the specified time.
      * If there is already an event scheduled at this time, all subsequent events will be delayed by
      * the specified interval.
-     * @param event The timeline event to be triggered when the specified time is reached.
      * @param time The time at which the event should be triggered, in the timeline's specified units.
      * @param interval The time to delay subsequent events if needed, in the timeline's specified units.
+     * @param event The timeline event to be triggered when the specified time is reached.
      *
      * @throws IllegalStateException If the modification operation is prevented by an object using the timeline.
      */
-    public void insert(E event, long time, long interval) throws IllegalStateException {
+    public void insert(long time, long interval, E event) throws IllegalStateException {
         if (existsAt(time)) {
-            insertAndDelay(event, time, interval);
+            insertAndDelay(time, interval, event);
         } else {
             addEvent(time, event);
         }
