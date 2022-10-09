@@ -56,6 +56,8 @@ public class Timeline<E extends TimelineEvent>  {
      * Places an event on the timeline at the specified time.
      * @param time The time at which the event should be triggered, in the timeline's specified units.
      * @param event The timeline event to be triggered when the specified time is reached.
+     *
+     * @throws IllegalStateException If the modification operation is prevented by an object using the timeline.
      */
     public void addEvent(long time, E event) {
         notifyBeforeTimelineChanged();
@@ -80,6 +82,8 @@ public class Timeline<E extends TimelineEvent>  {
     /**
      * Removes the first occurrence of the specified event from the timeline, if it is present.
      * @param event The timeline event to remove.
+     *
+     * @throws IllegalStateException If the modification operation is prevented by an object using the timeline.
      */
     public void removeEvent(E event) {
         notifyBeforeTimelineChanged();
@@ -108,8 +112,10 @@ public class Timeline<E extends TimelineEvent>  {
      * @param time The time at which the event should be triggered, in the timeline's specified units.
      * @param interval The time to delay all subsequent events, in the timeline's specified units.
      * @param event The timeline event to be triggered when the specified time is reached.
+     *
+     * @throws IllegalStateException If the modification operation is prevented by an object using the timeline.
      */
-    public void insertAndDelay(long time, long interval, E event){
+    public void insertAndDelay(long time, long interval, E event) {
         notifyBeforeTimelineChanged();
 
         // Keep track of the old duration.
@@ -144,7 +150,7 @@ public class Timeline<E extends TimelineEvent>  {
      *
      * @throws IllegalStateException If the modification operation is prevented by an object using the timeline.
      */
-    public void insert(long time, long interval, E event) throws IllegalStateException {
+    public void insert(long time, long interval, E event) {
         if (existsAt(time)) {
             insertAndDelay(time, interval, event);
         } else {
