@@ -21,11 +21,11 @@
 package com.rohankhayech.playabletimeline;
 
 /**
- * The timeline frame represents an event placed on the timeline at a specific timeframe. 
- * 
+ * The timeline frame represents an event placed on the timeline at a specific timeframe.
+ *
  * @author Rohan Khayech
  */
-final class TimelineFrame<E extends TimelineEvent> implements Comparable<TimelineFrame<E>> {
+public final class TimelineFrame<E extends TimelineEvent> implements Comparable<TimelineFrame<E>> {
     /** The timeline event to be triggered. */
     private final E event;
     /** The time at which the event should be triggered. */
