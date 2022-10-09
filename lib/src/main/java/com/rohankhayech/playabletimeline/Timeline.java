@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * The Timeline class represents a playable timeline of events where events are placed at a specific timeframe along the timeline.
@@ -182,9 +183,7 @@ public class Timeline<E extends TimelineEvent>  {
                 return tf.getEvent();
             }
         }
-
-        // If element not present
-        return null;
+        return null; // If element not present
     }
 
     /**
@@ -200,13 +199,10 @@ public class Timeline<E extends TimelineEvent>  {
      * @return A list of events placed at the specified timestamp.
      */
     public List<E> getAll(long timestamp) {
-        List<E> list = new LinkedList<>();
-        for (TimelineFrame<E> tf : events) {
-            if (tf.getTime() == timestamp) {
-                list.add(tf.getEvent());
-            }
-        }
-        return list;
+        return events.stream()
+            .filter(tf -> tf.getTime() == timestamp)
+            .map(TimelineFrame::getEvent)
+            .collect(Collectors.toList());
     }
 
     /**
@@ -216,12 +212,7 @@ public class Timeline<E extends TimelineEvent>  {
      * @return {@code true} if an event exists at the given timestamp, {@code false} otherwise.
      */
     public boolean existsAt(long timestamp) {
-        for (TimelineFrame<E> tf : events) {
-            if (tf.getTime() == timestamp) {
-                return true;
-            }
-        }
-        return false;
+        return events.stream().anyMatch(tf -> tf.getTime()==timestamp);
     }
 
     /**
@@ -234,14 +225,12 @@ public class Timeline<E extends TimelineEvent>  {
      * @return A list of events placed at approximately the specified step.
      */
     public List<E> getApprox(long step, long size) {
-        List<E> list = new LinkedList<>();
-        for (TimelineFrame<E> tf : events) {
-            long approxStep = Math.round((double)tf.getTime()/(double)size);
-            if (approxStep == step) {
-                list.add(tf.getEvent());
-            }
-        }
-        return list;
+        // Calculate approx step and filter for those that match step.
+        return events.stream()
+            .filter(tf ->
+                step == Math.round((double)tf.getTime()/(double)size))
+            .map(TimelineFrame::getEvent)
+            .collect(Collectors.toList());
     }
 
     /**
