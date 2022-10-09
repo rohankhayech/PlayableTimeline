@@ -33,6 +33,7 @@ import org.junit.Test;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -226,6 +227,23 @@ public class TimelineTest {
     }
 
     @Test
+    public void testTimeOf() {
+        // Check when tl empty.
+        assertThrows("Returns event when timeline is empty.", NoSuchElementException.class, () -> tl.timeOf(e[0]));
+
+        // Add the same event twice at different times.
+        TimelineEvent e = () -> {};
+        tl.addEvent(4, e);
+        tl.addEvent(6, e);
+
+        // Check non-present event.
+        assertThrows("Returns true when timestamp is not present.", NoSuchElementException.class, () -> tl.timeOf(dupeEvent));
+
+        // Check earliest occurrence is returned.
+        assertEquals("Doesn't return the time of the earliest occurrence.", 4, tl.timeOf(e));
+    }
+
+    @Test
     public void testGetAll() {
         // Check when tl empty.
         assertEquals("Returns non-empty list when timeline is empty.",0, tl.getAll(0).size());
@@ -237,7 +255,7 @@ public class TimelineTest {
         // Check all events returned.
         tl.addEvent(2, dupeEvent);
         List<TimelineEvent> events = tl.getAll(2);
-        assertEquals("Returned list has incorrect num of events.", 2, tl.getAll(2).size());
+        assertEquals("Returned list has incorrect num of events.", 2, events.size());
         assertTrue("Correct events not returned.", events.contains(e[1]));
         assertTrue("Correct events not returned.", events.contains(dupeEvent));
     }

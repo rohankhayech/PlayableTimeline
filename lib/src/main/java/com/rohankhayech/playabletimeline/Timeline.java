@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -228,6 +229,22 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      */
     public boolean contains(E event) {
         return events.stream().anyMatch(tf -> tf.getEvent().equals(event));
+    }
+
+    /**
+     * Retrieves the timestamp of the earliest occurrence of the specified event on the timeline.
+     * @param event The event on the timeline.
+     * @return The timestamp of the specified event.
+     *
+     * @throws NoSuchElementException If the specified event is not placed on the timeline.
+     */
+    public long timeOf(E event) {
+        for (TimelineFrame<E> tf : events) {
+            if (tf.getEvent().equals(event)) {
+                return tf.getTime();
+            }
+        }
+        throw new NoSuchElementException("The specified event is not placed on the timeline.");
     }
 
     /**
