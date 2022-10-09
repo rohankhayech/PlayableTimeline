@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
  * @author Rohan Khayech
  * @param <E> Type of events the timeline holds.
  */
-public class Timeline<E extends TimelineEvent>  {
+public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame<E>> {
 
     /** Chronological list of events and their timeframes on the timeline. */
     private final LinkedList<TimelineFrame<E>> events = new LinkedList<>();
@@ -122,7 +122,7 @@ public class Timeline<E extends TimelineEvent>  {
         long oldDuration = getDuration();
 
         // Move back subsequent events by the specified interval.
-        Iterator<TimelineFrame<E>> iter = getIteratorAt(time);
+        Iterator<TimelineFrame<E>> iter = iteratorAt(time);
         while (iter.hasNext()) {
             TimelineFrame<E> tf = iter.next();
             tf.setTime(tf.getTime()+interval);
@@ -159,9 +159,9 @@ public class Timeline<E extends TimelineEvent>  {
     }
 
     /**
-     * @return The chronological list of events and their timeframes on the timeline.
+     * @return An unmodifiable, chronological list of timeframes and their events on the timeline.
      */
-    public List<TimelineFrame<E>> getEvents() {
+    public List<TimelineFrame<E>> toList() {
         return Collections.unmodifiableList(events);
     }
 
@@ -222,6 +222,15 @@ public class Timeline<E extends TimelineEvent>  {
     }
 
     /**
+     * Checks whether the timeline contains the given event.
+     * @param event The event to check for.
+     * @return {@code true} if the timeline contains the given event, {@code false} otherwise.
+     */
+    public boolean contains(E event) {
+        return events.stream().anyMatch(tf -> tf.getEvent().equals(event));
+    }
+
+    /**
      * Divides the timeline into steps of {@code size} duration and retrieves all events that are placed
      * at approximately the specified step. This method can be used to display events at a lower
      * fidelity than they are played at.
@@ -256,13 +265,25 @@ public class Timeline<E extends TimelineEvent>  {
         } else return 0;
     }
 
+    /** @return {@code true} if the this timeline contains no events. */
+    public boolean isEmpty() {
+        return events.isEmpty();
+    }
+
+    /**
+     * @return An iterator over the timeline's events.
+     */
+    public Iterator<TimelineFrame<E>> iterator() {
+        return toList().listIterator();
+    }
+
     /**
      * Returns a timeline iterator starting at the next event after the specified time.
      * @param time The time position (in units specified by the timeline).
      * @return An iterator starting at the next event after the specified time.
      */
-    public Iterator<TimelineFrame<E>> getIteratorAt(long time) {
-        //Find index of next event timeframe after the given time.
+    public Iterator<TimelineFrame<E>> iteratorAt(long time) {
+        // Find index of next event timeframe after the given time.
         int index = 0;
         for (TimelineFrame<E> tf : events) {
             if (time <= tf.getTime()) {
@@ -272,7 +293,7 @@ public class Timeline<E extends TimelineEvent>  {
         }
 
         // Return an iterator starting at the next event after the given time.
-        return events.listIterator(index);
+        return toList().listIterator(index);
     }
 
     /**

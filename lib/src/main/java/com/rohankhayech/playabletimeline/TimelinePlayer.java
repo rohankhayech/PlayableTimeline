@@ -74,7 +74,7 @@ public class TimelinePlayer<E extends TimelineEvent> implements Runnable {
         this.tl = tl;
 
         // Retrieve an iterator for playback.
-        iter = new PeekingIterator<>(tl.getEvents().iterator());
+        iter = new PeekingIterator<>(tl.iterator());
 
         // Add timeline listener.
         tl.addListener(tlListener);
@@ -168,7 +168,7 @@ public class TimelinePlayer<E extends TimelineEvent> implements Runnable {
      */
     private PeekingIterator<TimelineFrame<E>> getIteratorAt(long time) {
         // Return an peeking iterator starting at the next event after the given time.
-        return new PeekingIterator<>(tl.getIteratorAt(time));
+        return new PeekingIterator<>(tl.iteratorAt(time));
     }
 
     /**

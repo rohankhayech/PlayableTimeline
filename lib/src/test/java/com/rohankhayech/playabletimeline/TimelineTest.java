@@ -112,7 +112,7 @@ public class TimelineTest {
         addDefaultEvents();
 
         // Check order is chronological.
-        List<TimelineFrame<TimelineEvent>> events = tl.getEvents();
+        List<TimelineFrame<TimelineEvent>> events = tl.toList();
         assertEquals("Events not in chronological order.", e[0], events.get(0).getEvent());
         assertEquals("Events not in chronological order.", e[1], events.get(1).getEvent());
         assertEquals("Events not in chronological order.", e[2], events.get(2).getEvent());
@@ -195,17 +195,20 @@ public class TimelineTest {
     }
 
     @Test
-    public void testGetEvents() {
+    public void testToList() {
         // Check empty list.
-        assertEquals("Returns non-empty list when timeline empty.", 0, tl.getEvents().size());
+        assertEquals("Returns non-empty list when timeline empty.", 0, tl.toList().size());
 
         addDefaultEvents();
 
         // Check order is chronological.
-        List<TimelineFrame<TimelineEvent>> events = tl.getEvents();
+        List<TimelineFrame<TimelineEvent>> events = tl.toList();
         assertEquals("Events not in chronological order.", e[0], events.get(0).getEvent());
         assertEquals("Events not in chronological order.", e[1], events.get(1).getEvent());
         assertEquals("Events not in chronological order.", e[2], events.get(2).getEvent());
+
+        // Check unmodifiable
+        assertThrows(UnsupportedOperationException.class,() -> events.add(new TimelineFrame<>(0,dupeEvent)));
     }
 
     @Test
@@ -252,6 +255,29 @@ public class TimelineTest {
         assertTrue("Returned false when event present.", tl.existsAt(2));
     }
 
+    @Test
+    public void testContains() {
+        // Check when tl empty.
+        assertFalse("Returns true when timeline is empty.", tl.contains(e[0]));
+
+        // Check non-present event.
+        addDefaultEvents();
+        assertFalse("Returns true when timestamp is not present.", tl.contains(dupeEvent));
+
+        // Check when event present.
+        assertTrue("Returned false when event present.", tl.contains(e[0]));
+    }
+
+    @Test
+    public void testIsEmpty() {
+        // Check when tl empty.
+        assertTrue("Returns false when timeline is empty.", tl.isEmpty());
+
+        // Check with event.
+        tl.addEvent(0, e[0]);
+        assertFalse("Returns true when timeline is not empty.", tl.isEmpty());
+    }
+
     // TODO: Test getApprox().
 
     @Test
@@ -267,14 +293,38 @@ public class TimelineTest {
     }
 
     @Test
-    public void testGetIteratorAt() {
-        Iterator<TimelineFrame<TimelineEvent>> iter = tl.getIteratorAt(0);
+    public void testIterator() {
+        // Check iterator on empty timeline.
+        Iterator<TimelineFrame<TimelineEvent>> iter = tl.iterator();
         assertFalse("Non-empty iterator returned when tl empty.", iter.hasNext());
+
+        // Check iterator starts from the right point and contains all subsequent elements.
         addDefaultEvents();
-        iter = tl.getIteratorAt(1);
+        iter = tl.iterator();
+        assertEquals("Incorrect event from iterator.",e[0],iter.next().getEvent());
         assertEquals("Incorrect event from iterator.",e[1],iter.next().getEvent());
         assertEquals("Incorrect event from iterator.",e[2],iter.next().getEvent());
         assertFalse("Incorrect iterator.", iter.hasNext());
+
+        // Check iterator does not allow mutation.
+        assertThrows(UnsupportedOperationException.class, iter::remove);
+    }
+
+    @Test
+    public void testIteratorAt() {
+        // Check iterator on empty timeline.
+        Iterator<TimelineFrame<TimelineEvent>> iter = tl.iteratorAt(0);
+        assertFalse("Non-empty iterator returned when tl empty.", iter.hasNext());
+
+        // Check iterator starts from the right point and contains all subsequent elements.
+        addDefaultEvents();
+        iter = tl.iteratorAt(1);
+        assertEquals("Incorrect event from iterator.",e[1],iter.next().getEvent());
+        assertEquals("Incorrect event from iterator.",e[2],iter.next().getEvent());
+        assertFalse("Incorrect iterator.", iter.hasNext());
+
+        // Check iterator does not allow mutation.
+        assertThrows(UnsupportedOperationException.class, iter::remove);
     }
 
     @Test
