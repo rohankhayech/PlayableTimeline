@@ -21,6 +21,7 @@
 package com.rohankhayech.playabletimeline;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 
 import org.junit.After;
 import org.junit.Before;
@@ -72,6 +73,12 @@ public class ContextualTimelinePlayerTest {
         plr.play();
         Thread.sleep(2);
         assertEquals("Value not updated with value from context object correctly.",5, value);
+    }
+
+    @Test
+    public void testTriggerContextualEventWithoutContext() {
+        ContextualTimelineEvent<TestContext> e = c -> {};
+        assertThrows(UnsupportedOperationException.class, e::trigger);
     }
 
     /**
