@@ -58,9 +58,12 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      * @param time The time at which the event should be triggered, in the timeline's specified units.
      * @param event The timeline event to be triggered when the specified time is reached.
      *
+     * @throws IllegalArgumentException If the specified event is {@code null}.
      * @throws IllegalStateException If the modification operation is prevented by an object using the timeline.
      */
     public void addEvent(long time, E event) {
+        if (event == null) throw new IllegalArgumentException("Cannot add null event to the timeline.");
+
         notifyBeforeTimelineChanged();
 
         // Keep track of the old duration.
@@ -87,6 +90,8 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      * @throws IllegalStateException If the modification operation is prevented by an object using the timeline.
      */
     public void removeEvent(E event) {
+        if (event == null) return;
+
         notifyBeforeTimelineChanged();
 
         // Keep track of the old duration.
@@ -114,9 +119,12 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      * @param interval The time to delay all subsequent events, in the timeline's specified units.
      * @param event The timeline event to be triggered when the specified time is reached.
      *
+     * @throws IllegalArgumentException If the specified event is {@code null}.
      * @throws IllegalStateException If the modification operation is prevented by an object using the timeline.
      */
     public void insertAndDelay(long time, long interval, E event) {
+        if (event == null) throw new IllegalArgumentException("Cannot add null event to the timeline.");
+
         notifyBeforeTimelineChanged();
 
         // Keep track of the old duration.
@@ -149,6 +157,7 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      * @param interval The time to delay subsequent events if needed, in the timeline's specified units.
      * @param event The timeline event to be triggered when the specified time is reached.
      *
+     * @throws IllegalArgumentException If the specified event is {@code null}.
      * @throws IllegalStateException If the modification operation is prevented by an object using the timeline.
      */
     public void insert(long time, long interval, E event) {
@@ -228,7 +237,7 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      * @return {@code true} if the timeline contains the given event, {@code false} otherwise.
      */
     public boolean contains(E event) {
-        return events.stream().anyMatch(tf -> tf.getEvent().equals(event));
+        return event != null ? events.stream().anyMatch(tf -> tf.getEvent().equals(event)) : false;
     }
 
     /**
@@ -239,6 +248,8 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      * @throws NoSuchElementException If the specified event is not placed on the timeline.
      */
     public long timeOf(E event) {
+        if (event == null) throw new NoSuchElementException("The specified event is not placed on the timeline.");
+
         for (TimelineFrame<E> tf : events) {
             if (tf.getEvent().equals(event)) {
                 return tf.getTime();
