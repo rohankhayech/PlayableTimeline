@@ -132,6 +132,9 @@ public class TimelineTest {
         // Check duration notification.
         tl.addEvent(EVENT_DELAY*3, e);
         assertTrue("No notification of duration.",notifiedDurationChanged);
+
+        // Check cannot add null
+        assertThrows("Added null without exception.", IllegalArgumentException.class,()->tl.addEvent(0, null));
     }
 
     @Test
@@ -151,6 +154,10 @@ public class TimelineTest {
         // Check duration change notification.
         tl.removeEvent(e[2]);
         assertTrue("No notification of duration change.",notifiedDurationChanged);
+
+        // Check remove null fails without removing or exception.
+        tl.removeEvent(null);
+        assertTrue("Removing null removed actual event.", tl.existsAt(EVENT_DELAY));
     }
 
     @Test
@@ -241,6 +248,9 @@ public class TimelineTest {
 
         // Check earliest occurrence is returned.
         assertEquals("Doesn't return the time of the earliest occurrence.", 4, tl.timeOf(e));
+
+        // Check null.
+        assertThrows("", NoSuchElementException.class, () ->  tl.timeOf(null));
     }
 
     @Test
