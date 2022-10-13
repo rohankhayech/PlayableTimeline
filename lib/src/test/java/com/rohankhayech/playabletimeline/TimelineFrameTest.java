@@ -22,6 +22,7 @@ package com.rohankhayech.playabletimeline;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertThrows;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -100,7 +101,11 @@ public class TimelineFrameTest {
 
         // Greater timestamp
         assertEquals("compareTo() should return +1 for a frame with greater timestamp.", 1, f2.compareTo(frame));
+    }
 
-
+    @Test
+    public void testInvalidConstruction() {
+        // Attempt to construct with null event.
+        assertThrows("Constructed timeline with null timeunit.", IllegalArgumentException.class, ()-> new TimelineFrame<>(0,null));
     }
 }

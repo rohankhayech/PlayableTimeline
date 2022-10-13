@@ -227,5 +227,17 @@ public class TimelinePlayerTest {
         plr.stop();
     }
 
+    @Test
+    public void testInvalidConstruction() {
+        // Attempt constructing player with null timeline.
+        assertThrows("Constructed player with null timeline.",IllegalArgumentException.class,()-> new TimelinePlayer<>(null));
+    }
+
+    @Test
+    public void testNullListener() {
+        // Attempt attaching null listener.
+        assertThrows("Attached null listener.",IllegalArgumentException.class,()-> plr.addListener(null));
+    }
+
     // TODO: Add latency handling / blocking event test.
 }

@@ -69,8 +69,11 @@ public class TimelinePlayer<E extends TimelineEvent> implements Runnable {
      * The timeline player will run in a separate thread until {@code shutdown()} is called.
      *
      * @param tl The timeline to play.
+     * @throws IllegalArgumentException If the specified timeline is {@code null}.
      */
     public TimelinePlayer(Timeline<E> tl) {
+        if (tl == null) throw new IllegalArgumentException("Cannot create a player for a null timeline.");
+
         this.tl = tl;
 
         // Retrieve an iterator for playback.
@@ -222,10 +225,12 @@ public class TimelinePlayer<E extends TimelineEvent> implements Runnable {
      * @param l The timeline listener to attach.
      * @return A reference to the listener added, useful if the listener was created inline as an
      * anonymous class.
+     * @throws IllegalArgumentException If the specified listener is {@code null}.
      */
     public TLPlaybackListener addListener(TLPlaybackListener l) {
-        listeners.add(l);
-        return l;
+            if (l == null) throw new IllegalArgumentException("Cannot attach a null listener.");
+            listeners.add(l);
+            return l;
     }
 
     /**

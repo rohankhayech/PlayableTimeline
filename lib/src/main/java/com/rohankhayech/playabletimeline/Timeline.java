@@ -48,8 +48,10 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
     /**
      * Constructs a new timeline that with the given frequency unit.
      * @param unit Unit of frequency at which the timeline should run.
+     * @throws IllegalArgumentException If the specified time unit is {@code null}.
      */
     public Timeline(TimeUnit unit) {
+        if (unit == null) throw new IllegalArgumentException("Time unit cannot be null.");
         this.unit = unit;
     }
 
@@ -237,7 +239,7 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      * @return {@code true} if the timeline contains the given event, {@code false} otherwise.
      */
     public boolean contains(E event) {
-        return event != null ? events.stream().anyMatch(tf -> tf.getEvent().equals(event)) : false;
+        return event != null && events.stream().anyMatch(tf -> tf.getEvent().equals(event));
     }
 
     /**
@@ -342,8 +344,10 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      * @param l The timeline listener to attach.
      * @return A reference to the listener added, useful if the listener was created inline as an
      * anonymous class.
+     * @throws IllegalArgumentException If the specified listener is {@code null}.
      */
     public TimelineListener addListener(TimelineListener l) {
+        if (l == null) throw new IllegalArgumentException("Cannot attach null listener.");
         listeners.add(l);
         return l;
     }
@@ -458,7 +462,7 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
 
     @Override
     public String toString() {
-        StringBuilder str = new StringBuilder("Timeline with Duration " + getDuration() + " " + unit.toString() + ":");
+        StringBuilder str = new StringBuilder("Timeline with Duration " + getDuration() + " " + unit + ":");
         for (TimelineFrame<E> e : events) {
             str.append("\n\t").append(e.getTime()).append(" ").append(unit).append(": ").append(e.getEvent().toString());
         }

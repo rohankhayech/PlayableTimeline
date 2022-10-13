@@ -10,5 +10,6 @@ lib/bin
 # IDE's
 .vscode/
 .idea/
+.run/
 local.properties
 

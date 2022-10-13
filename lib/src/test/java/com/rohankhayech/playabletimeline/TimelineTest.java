@@ -376,6 +376,18 @@ public class TimelineTest {
         assertEquals("Timelines should be equal.",tl2,tl);
     }
 
+    @Test
+    public void testInvalidConstruction() {
+        // Attempt to construct with null TimeUnit.
+        assertThrows("Constructed timeline with null timeunit.", IllegalArgumentException.class, ()-> new Timeline<>(null));
+    }
+
+    @Test
+    public void testNullListener() {
+        // Attempt attaching null listener.
+        assertThrows("Attached null listener.", IllegalArgumentException.class,()-> tl.addListener(null));
+    }
+
     // Helper Methods
 
     /**
