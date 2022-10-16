@@ -20,6 +20,8 @@
 
 package com.rohankhayech.playabletimeline;
 
+import java.util.Objects;
+
 /**
  * Test event class that displays a message when triggered.
  *
@@ -41,5 +43,18 @@ public class MessageEvent implements TimelineEvent {
     @Override
     public String toString() {
         return "Print \"" + msg + "\"";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MessageEvent that = (MessageEvent)o;
+        return msg.equals(that.msg);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(msg);
     }
 }
