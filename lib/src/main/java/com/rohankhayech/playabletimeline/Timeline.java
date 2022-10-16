@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -458,6 +459,11 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
         Timeline<?> o = (Timeline<?>)obj;
         return unit.equals(o.unit)
             && events.equals(o.events);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(events, unit);
     }
 
     @Override

@@ -374,6 +374,19 @@ public class TimelineTest {
         tl.addEvent(0, e[0]);
         assertEquals("Timelines should be equal.",tl,tl2);
         assertEquals("Timelines should be equal.",tl2,tl);
+
+        // Check self-equality.
+        assertEquals("Timeline should equal itself.",tl,tl);
+    }
+
+    @Test
+    public void testHashCode() {
+        // Check hashcode contract with equals method.
+        tl.addEvent(0, e[0]);
+        Timeline<TimelineEvent> tl2 = new Timeline<>(TimeUnit.SECONDS);
+        tl2.addEvent(0, e[0]);
+
+        assertEquals("Equal timelines should return same hash code.",tl.hashCode(),tl2.hashCode());
     }
 
     @Test

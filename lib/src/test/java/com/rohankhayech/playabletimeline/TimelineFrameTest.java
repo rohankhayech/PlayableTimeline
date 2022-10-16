@@ -86,6 +86,24 @@ public class TimelineFrameTest {
         f2 = new TimelineFrame<>(0, event);
         assertEquals("TimelineFrames should be equal.", f2, frame);
         assertEquals("TimelineFrames should be equal.", frame, f2);
+
+        // Check self-equality
+        assertEquals("Timeline frame not equal to itself.",frame,frame);
+    }
+
+    @Test
+    public void testHashCode() {
+        // Check hashcode contract with equals.
+        TimelineFrame<TimelineEvent> f2 = new TimelineFrame<>(0, event);
+
+        // Check equal frames with basic event objects return same hash code.
+        assertEquals("Equal objects should return same hash code.",frame.hashCode(),f2.hashCode());
+
+        // Check equal frames with concrete event objects return same hash code.
+        MessageEvent m1, m2;
+        m1 = new MessageEvent("MSG");
+        m2 = new MessageEvent("MSG");
+        assertEquals("Equal objects should return same hash code.",m1.hashCode(),m2.hashCode());
     }
 
     @Test

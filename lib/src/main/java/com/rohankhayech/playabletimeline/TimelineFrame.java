@@ -20,6 +20,8 @@
 
 package com.rohankhayech.playabletimeline;
 
+import java.util.Objects;
+
 /**
  * The timeline frame represents an event placed on the timeline at a specific timeframe.
  *
@@ -83,6 +85,11 @@ public final class TimelineFrame<E extends TimelineEvent> implements Comparable<
         TimelineFrame<?> o = (TimelineFrame<?>)obj;
         return time == o.time
             && event.equals(o.event);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(event, time);
     }
 
     /**
