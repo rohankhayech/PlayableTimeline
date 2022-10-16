@@ -22,6 +22,7 @@ package com.rohankhayech.playabletimeline;
 
 import org.apache.commons.collections4.iterators.PeekingIterator;
 
+import java.io.Closeable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -34,7 +35,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @param <E> The type of events contained in the timeline.
  */
-public class TimelinePlayer<E extends TimelineEvent> implements Runnable {
+public class TimelinePlayer<E extends TimelineEvent> implements Runnable, Closeable {
     
     /** Timeline to play. */
     private final Timeline<E> tl;
@@ -90,6 +91,7 @@ public class TimelinePlayer<E extends TimelineEvent> implements Runnable {
     /**
      * Closes the playback thread. Subsequent calls to this method will have no effect.
      */
+    @Override
     public void close() {
         if (thread != null) {
             synchronized (mutex) {
