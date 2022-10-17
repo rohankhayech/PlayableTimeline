@@ -57,6 +57,22 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
     }
 
     /**
+     * Creates a shallow copy of the specified timeline.
+     * The events the timeline holds will not be copied.
+     * @param o The timeline to copy.
+     */
+    public Timeline(Timeline<E> o) {
+        if (o == null) throw new IllegalArgumentException("Timeline to copy cannot be null.");
+
+        this.unit = o.unit;
+
+        // Create copy of timeline frames.
+        for(TimelineFrame<E> tf : o.events) {
+            events.add(new TimelineFrame<>(tf));
+        }
+    }
+
+    /**
      * Places an event on the timeline at the specified time.
      * @param time The time at which the event should be triggered, in the timeline's specified units.
      * @param event The timeline event to be triggered when the specified time is reached.

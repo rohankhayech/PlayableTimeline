@@ -49,6 +49,16 @@ public final class TimelineFrame<E extends TimelineEvent> implements Comparable<
     }
 
     /**
+     * Constructs a shallow copy of the specified timeline frame, holding the same event object.
+     * @param o The timeline frame to copy.
+     */
+    TimelineFrame(TimelineFrame<E> o) {
+        if (o == null) throw new IllegalArgumentException("Timeline frame to copy cannot be null.");
+        this.event = o.event;
+        this.time = o.time;
+    }
+
+    /**
      * @return The timeline event to be triggered.
      */
     public E getEvent() {

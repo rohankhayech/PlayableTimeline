@@ -22,6 +22,8 @@ package com.rohankhayech.playabletimeline;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThrows;
 
 import org.junit.Before;
@@ -124,6 +126,20 @@ public class TimelineFrameTest {
     @Test
     public void testInvalidConstruction() {
         // Attempt to construct with null event.
-        assertThrows("Constructed timeline with null timeunit.", IllegalArgumentException.class, ()-> new TimelineFrame<>(0,null));
+        assertThrows("Constructed timeline with null timeunit.", IllegalArgumentException.class, ()-> new TimelineFrame<>(0, null));
+    }
+
+    @Test
+    public void testCopy() {
+        // Check copy constructs new equal object.
+        TimelineFrame<TimelineEvent> copy = new TimelineFrame<>(frame);
+        assertNotSame("Copy should return a new object.", frame, copy);
+        assertEquals("Copy should be equal.", frame, copy);
+
+        // Check held event is same object.
+        assertSame("Held event should be same object.", frame.getEvent(), copy.getEvent());
+
+        // Check copy of null fails.
+        assertThrows("Copied null timeline frame.",IllegalArgumentException.class,()-> new TimelineFrame<>(null));
     }
 }
