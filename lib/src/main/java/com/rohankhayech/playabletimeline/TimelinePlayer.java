@@ -25,6 +25,7 @@ import org.apache.commons.collections4.iterators.PeekingIterator;
 import java.io.Closeable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -70,12 +71,10 @@ public class TimelinePlayer<E extends TimelineEvent> implements Runnable, Closea
      * The timeline player will run in a separate thread until {@code shutdown()} is called.
      *
      * @param tl The timeline to play.
-     * @throws IllegalArgumentException If the specified timeline is {@code null}.
+     * @throws NullPointerException If the specified timeline is {@code null}.
      */
     public TimelinePlayer(Timeline<E> tl) {
-        if (tl == null) throw new IllegalArgumentException("Cannot create a player for a null timeline.");
-
-        this.tl = tl;
+        this.tl = Objects.requireNonNull(tl, "Cannot create a player for a null timeline.");
 
         // Retrieve an iterator for playback.
         iter = new PeekingIterator<>(tl.iterator());
@@ -227,10 +226,10 @@ public class TimelinePlayer<E extends TimelineEvent> implements Runnable, Closea
      * @param l The timeline listener to attach.
      * @return A reference to the listener added, useful if the listener was created inline as an
      * anonymous class.
-     * @throws IllegalArgumentException If the specified listener is {@code null}.
+     * @throws NullPointerException If the specified listener is {@code null}.
      */
     public TLPlaybackListener addListener(TLPlaybackListener l) {
-            if (l == null) throw new IllegalArgumentException("Cannot attach a null listener.");
+            Objects.requireNonNull(l, "Cannot attach a null listener.");
             listeners.add(l);
             return l;
     }

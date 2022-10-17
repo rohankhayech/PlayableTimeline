@@ -46,6 +46,7 @@ public final class ContextualTimelinePlayer<E extends ContextualTimelineEvent<C>
      * @param tl The timeline to play.
      * @param context An object providing the required context for playback.
      *                Eg. An output device or activity context.
+     * @throws NullPointerException If the specified timeline is {@code null}.
      */
     public ContextualTimelinePlayer(Timeline<E> tl, C context) {
         super(tl);

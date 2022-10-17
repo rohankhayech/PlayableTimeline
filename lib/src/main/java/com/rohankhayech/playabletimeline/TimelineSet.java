@@ -37,7 +37,7 @@ public class TimelineSet<E extends TimelineEvent> extends Timeline<E> {
      * Constructs a new timeline set that with the given frequency unit.
      *
      * @param unit Unit of frequency at which the timeline should run.
-     * @throws IllegalArgumentException If the specified time unit is {@code null}.
+     * @throws NullPointerException If the specified time unit is {@code null}.
      */
     public TimelineSet(TimeUnit unit) {
         super(unit);
@@ -49,7 +49,8 @@ public class TimelineSet<E extends TimelineEvent> extends Timeline<E> {
      * @param time  The time at which the event should be triggered, in the timeline's specified units.
      * @param event The timeline event to be triggered when the specified time is reached.
      *
-     * @throws IllegalArgumentException If an event already exists at the specified timestamp, or the specified event is {@code null}.
+     * @throws IllegalArgumentException If an event already exists at the specified timestamp.
+     * @throws NullPointerException If the specified event is {@code null}.
      * @throws IllegalStateException If the modification operation is prevented by an object using the timeline.
      */
     @Override

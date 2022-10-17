@@ -135,7 +135,7 @@ public class TimelineTest {
         assertTrue("No notification of duration.",notifiedDurationChanged);
 
         // Check cannot add null
-        assertThrows("Added null without exception.", IllegalArgumentException.class,()->tl.addEvent(0, null));
+        assertThrows("Added null without exception.", NullPointerException.class,()->tl.addEvent(0, null));
     }
 
     @Test
@@ -251,7 +251,7 @@ public class TimelineTest {
         assertEquals("Doesn't return the time of the earliest occurrence.", 4, tl.timeOf(e));
 
         // Check null.
-        assertThrows("", NoSuchElementException.class, () ->  tl.timeOf(null));
+        assertThrows("", NullPointerException.class, () ->  tl.timeOf(null));
     }
 
     @Test
@@ -393,7 +393,7 @@ public class TimelineTest {
     @Test
     public void testInvalidConstruction() {
         // Attempt to construct with null TimeUnit.
-        assertThrows("Constructed timeline with null timeunit.", IllegalArgumentException.class, ()-> new Timeline<>((TimeUnit)null));
+        assertThrows("Constructed timeline with null timeunit.", NullPointerException.class, ()-> new Timeline<>((TimeUnit)null));
     }
 
     @Test
@@ -408,13 +408,13 @@ public class TimelineTest {
         assertNotSame("Timeline frames should be copies.", tl.toList().get(0), copy.toList().get(0));
 
         // Check copy of null fails.
-        assertThrows("Copied null timeline.",IllegalArgumentException.class,()-> new Timeline<>((Timeline<TimelineEvent>)null));
+        assertThrows("Copied null timeline.",NullPointerException.class,()-> new Timeline<>((Timeline<TimelineEvent>)null));
     }
 
     @Test
     public void testNullListener() {
         // Attempt attaching null listener.
-        assertThrows("Attached null listener.", IllegalArgumentException.class,()-> tl.addListener(null));
+        assertThrows("Attached null listener.", NullPointerException.class,()-> tl.addListener(null));
     }
 
     // Helper Methods

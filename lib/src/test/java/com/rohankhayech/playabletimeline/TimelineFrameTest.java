@@ -126,7 +126,7 @@ public class TimelineFrameTest {
     @Test
     public void testInvalidConstruction() {
         // Attempt to construct with null event.
-        assertThrows("Constructed timeline with null timeunit.", IllegalArgumentException.class, ()-> new TimelineFrame<>(0, null));
+        assertThrows("Constructed timeline with null timeunit.", NullPointerException.class, ()-> new TimelineFrame<>(0, null));
     }
 
     @Test
@@ -140,6 +140,6 @@ public class TimelineFrameTest {
         assertSame("Held event should be same object.", frame.getEvent(), copy.getEvent());
 
         // Check copy of null fails.
-        assertThrows("Copied null timeline frame.",IllegalArgumentException.class,()-> new TimelineFrame<>(null));
+        assertThrows("Copied null timeline frame.",NullPointerException.class,()-> new TimelineFrame<>(null));
     }
 }

@@ -49,20 +49,20 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
     /**
      * Constructs a new timeline that with the given frequency unit.
      * @param unit Unit of frequency at which the timeline should run.
-     * @throws IllegalArgumentException If the specified time unit is {@code null}.
+     * @throws NullPointerException If the specified time unit is {@code null}.
      */
     public Timeline(TimeUnit unit) {
-        if (unit == null) throw new IllegalArgumentException("Time unit cannot be null.");
-        this.unit = unit;
+        this.unit = Objects.requireNonNull(unit, "Time unit cannot be null.");
     }
 
     /**
      * Creates a shallow copy of the specified timeline.
      * The events the timeline holds will not be copied.
      * @param o The timeline to copy.
+     * @throws NullPointerException If the specified timeline is {@code null}.
      */
     public Timeline(Timeline<E> o) {
-        if (o == null) throw new IllegalArgumentException("Timeline to copy cannot be null.");
+        Objects.requireNonNull(o,"Timeline to copy cannot be null.");
 
         this.unit = o.unit;
 
@@ -77,11 +77,11 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      * @param time The time at which the event should be triggered, in the timeline's specified units.
      * @param event The timeline event to be triggered when the specified time is reached.
      *
-     * @throws IllegalArgumentException If the specified event is {@code null}.
+     * @throws NullPointerException If the specified event is {@code null}.
      * @throws IllegalStateException If the modification operation is prevented by an object using the timeline.
      */
     public void addEvent(long time, E event) {
-        if (event == null) throw new IllegalArgumentException("Cannot add null event to the timeline.");
+        Objects.requireNonNull(event, "Cannot add null event to the timeline.");
 
         notifyBeforeTimelineChanged();
 
@@ -138,11 +138,11 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      * @param interval The time to delay all subsequent events, in the timeline's specified units.
      * @param event The timeline event to be triggered when the specified time is reached.
      *
-     * @throws IllegalArgumentException If the specified event is {@code null}.
+     * @throws NullPointerException Exception If the specified event is {@code null}.
      * @throws IllegalStateException If the modification operation is prevented by an object using the timeline.
      */
     public void insertAndDelay(long time, long interval, E event) {
-        if (event == null) throw new IllegalArgumentException("Cannot add null event to the timeline.");
+        Objects.requireNonNull(event,"Cannot add null event to the timeline.");
 
         notifyBeforeTimelineChanged();
 
@@ -176,7 +176,7 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      * @param interval The time to delay subsequent events if needed, in the timeline's specified units.
      * @param event The timeline event to be triggered when the specified time is reached.
      *
-     * @throws IllegalArgumentException If the specified event is {@code null}.
+     * @throws NullPointerException If the specified event is {@code null}.
      * @throws IllegalStateException If the modification operation is prevented by an object using the timeline.
      */
     public void insert(long time, long interval, E event) {
@@ -265,9 +265,10 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      * @return The timestamp of the specified event.
      *
      * @throws NoSuchElementException If the specified event is not placed on the timeline.
+     * @throws NullPointerException If the specified event is {@code null}.
      */
     public long timeOf(E event) {
-        if (event == null) throw new NoSuchElementException("The specified event is not placed on the timeline.");
+        Objects.requireNonNull(event, "The specified event is null.");
 
         for (TimelineFrame<E> tf : events) {
             if (tf.getEvent().equals(event)) {
@@ -361,10 +362,10 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      * @param l The timeline listener to attach.
      * @return A reference to the listener added, useful if the listener was created inline as an
      * anonymous class.
-     * @throws IllegalArgumentException If the specified listener is {@code null}.
+     * @throws NullPointerException If the specified listener is {@code null}.
      */
     public TimelineListener addListener(TimelineListener l) {
-        if (l == null) throw new IllegalArgumentException("Cannot attach null listener.");
+        Objects.requireNonNull(l,"Cannot attach null listener.");
         listeners.add(l);
         return l;
     }

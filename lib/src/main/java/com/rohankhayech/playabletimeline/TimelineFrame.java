@@ -40,20 +40,20 @@ public final class TimelineFrame<E extends TimelineEvent> implements Comparable<
      *
      * @param time The time at which the event should be triggered, in the timeline's specified units.
      * @param event The timeline event to be triggered.
-     * @throws IllegalArgumentException If the specified event is {@code null}.
+     * @throws NullPointerException If the specified event is {@code null}.
      */
     TimelineFrame(long time, E event) {
-        if (event == null) throw new IllegalArgumentException("Event cannot be null.");
-        this.event = event;
+        this.event = Objects.requireNonNull(event, "Event cannot be null.");
         this.time = time;
     }
 
     /**
      * Constructs a shallow copy of the specified timeline frame, holding the same event object.
      * @param o The timeline frame to copy.
+     * @throws NullPointerException If the specified timeline frame is {@code null}.
      */
     TimelineFrame(TimelineFrame<E> o) {
-        if (o == null) throw new IllegalArgumentException("Timeline frame to copy cannot be null.");
+        Objects.requireNonNull(o,"Timeline frame to copy cannot be null.");
         this.event = o.event;
         this.time = o.time;
     }
