@@ -56,7 +56,7 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
     }
 
     /**
-     * Creates a shallow copy of the specified timeline.
+     * Constructs a shallow copy of the specified timeline.
      * The events the timeline holds will not be copied.
      * @param o The timeline to copy.
      * @throws NullPointerException If the specified timeline is {@code null}.
@@ -138,7 +138,7 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      * @param interval The time to delay all subsequent events, in the timeline's specified units.
      * @param event The timeline event to be triggered when the specified time is reached.
      *
-     * @throws NullPointerException Exception If the specified event is {@code null}.
+     * @throws NullPointerException If the specified event is {@code null}.
      * @throws IllegalStateException If the modification operation is prevented by an object using the timeline.
      */
     public void insertAndDelay(long time, long interval, E event) {
@@ -447,6 +447,7 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
     /**
      * Notifies all listeners that the specified event will be modified.
      * This should be called by any external class that modifies an event returned from this timeline.
+     * @param timestamp The timestamp of the event to be modified.
      * @throws IllegalStateException If a listener needs to prevent the modification operation,
      * eg. during playback or iteration.
      */
@@ -460,6 +461,7 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
     /**
      * Notifies all listeners that the specified event was modified.
      * This should be called by any external class that modifies an event returned from this timeline.
+     * @param timestamp The timestamp of the modified event.
      */
     public void notifyEventModified(long timestamp) {
         for (TimelineListener l : listeners) {
