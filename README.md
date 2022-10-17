@@ -19,10 +19,10 @@ A `Timeline` can be created using it's constructor, taking in the type of event 
 // Create a new timeline.
 Timeline<TimelineEvent> timeline = new Timeline<>(TimeUnit.SECONDS);
 ```
-Adding an event is then as easy as specifying the time to place it at and defining a lamda to be executed when the event is triggered:
+Adding an event is then as easy as specifying the time to place it at and defining a lambda to be executed when the event is triggered:
 
 ```java
-// Add an event using lamda syntax.
+// Add an event using lambda syntax.
 timeline.addEvent(1, () -> {
     System.out.println("Hello world.");
 });
@@ -67,9 +67,9 @@ timeline.addEvent(2, new TimelineEvent() {
     }
 });
 ```
-This can also be shortened to use lamda syntax as shown above in [Getting Started](https://github.com/rohankhayech/PlayableTimeline#getting-started).
+This can also be shortened to use lambda syntax as shown above in [Getting Started](https://github.com/rohankhayech/PlayableTimeline#getting-started).
 
-To create a more complex or reusable event, create a class implmenting `TimelineEvent`. The example below shows an event that holds a message and prints it when triggered:
+To create a more complex or reusable event, create a class implementing `TimelineEvent`. The example below shows an event that holds a message and prints it when triggered:
 
 ```java
 // Implement TimelineEvent for more complex events.
@@ -181,7 +181,7 @@ The `TimelineListener` interface provides callbacks before and after any modific
 timeline.addListener(new TimelineListener() {
     @Override public void beforeTimelineChanged() {...}
     @Override public void onTimelineChanged() {...}
-    @Override public void onEventAdded(long t) { ..}
+    @Override public void onEventAdded(long t) {...}
     @Override public void onEventInserted(long timestamp, long interval) {...}
     @Override public void onEventRemoved(long timestamp) {...}
     @Override public void onDurationChanged(long oldDuration, long newDuration) {...}
