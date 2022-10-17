@@ -44,6 +44,17 @@ public class TimelineSet<E extends TimelineEvent> extends Timeline<E> {
     }
 
     /**
+     * Constructs a shallow copy of the specified timeline.
+     * The events the timeline holds will not be copied.
+     *
+     * @param o The timeline to copy.
+     * @throws NullPointerException If the specified timeline is {@code null}.
+     */
+    public TimelineSet(TimelineSet<E> o) {
+        super(o);
+    }
+
+    /**
      * Places an event on the timeline at the specified time.
      *
      * @param time  The time at which the event should be triggered, in the timeline's specified units.
