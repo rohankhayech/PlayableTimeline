@@ -178,12 +178,12 @@ The `TimelineListener` interface provides callbacks before and after any modific
 
 ```java
 // Add a listener to the timeline to be notified before and after modification operations.
-timeline.addListener(new TimelineListener() {
+timeline.addListener(new TimelineListener<E>() {
     @Override public void beforeTimelineChanged() {...}
     @Override public void onTimelineChanged() {...}
-    @Override public void onEventAdded(long t) {...}
+    @Override public void onEventAdded(long t, E event) {...}
     @Override public void onEventInserted(long timestamp, long interval) {...}
-    @Override public void onEventRemoved(long timestamp) {...}
+    @Override public void onEventRemoved(long timestamp, E event) {...}
     @Override public void onDurationChanged(long oldDuration, long newDuration) {...}
 });
 ```
@@ -197,6 +197,7 @@ player.addListener(new TLPlaybackListener() {
     @Override public void onPlayheadUpdated(long playhead) {...}
     @Override public void onPlaybackStart() {...}
     @Override public void onPlaybackPaused() {...}
+    @Override public void onPlaybackFinished() {...}
 });
 ```
 
