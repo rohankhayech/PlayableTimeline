@@ -36,7 +36,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @param <E> The type of events contained in the timeline.
  */
-public class TimelinePlayer<E extends TimelineEvent> implements Runnable, Closeable {
+public class TimelinePlayer<E extends TimelineEvent> implements Closeable {
     
     /** Timeline to play. */
     private final Timeline<E> tl;
@@ -83,7 +83,7 @@ public class TimelinePlayer<E extends TimelineEvent> implements Runnable, Closea
         tl.addListener(tlListener);
 
         // Start the playback thread.
-        thread = new Thread(this);
+        thread = new Thread(()->run());
         thread.start();
     }
 
@@ -248,8 +248,7 @@ public class TimelinePlayer<E extends TimelineEvent> implements Runnable, Closea
      * This method should not be called directly, the timeline thread will run on instantiation
      * of the timeline player.
      */
-    @Override
-    public void run() {
+    private void run() {
         try {
             while(!shutdown) { // Loop until the player is closed.
                 while (playing) { // While the timeline is being played.
