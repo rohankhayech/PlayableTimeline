@@ -112,7 +112,7 @@ public class TimelinePlayerTest {
      * The actual real time that events are executed is not tested as this is reliant on latency.
      * However the test will timeout and fail if all events are not completed within a reasonable timeframe.
      */
-    @Test(timeout = (NUM_EVENTS+1)*EVENT_DELAY)
+    @Test(timeout = 1000)
     public void testPlayback() {
 
         // Check playback start.
@@ -196,7 +196,6 @@ public class TimelinePlayerTest {
 
     @Test
     public void testScrub() {
-        plr.play();
 
         // Scrub without notifying.
         plr.scrub(1, false);
@@ -207,6 +206,7 @@ public class TimelinePlayerTest {
         // Assert playback paused.
         assertFalse("Player playing after scrub.", plr.isPlaying());
 
+        plr.play();
         // Assert listener notified of scrub by default.
         plr.scrub(2);
         assertTrue("Listener not notified of scrub.",playheadUpdatedCalled);
