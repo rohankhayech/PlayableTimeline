@@ -10,7 +10,7 @@ This allows objects (implementing the `TimelineEvent` interface) to be added and
 
 The library also provides the `TimelinePlayer` class, which allows playback of a timeline, triggering each event at it's specified time. `TimelineEvent` is a functional interface that defines an event's behavior when triggered. 
 
-The library also supports [contextual events](https://github.com/rohankhayech/PlayableTimeline/#contextual-events-and-playback) and provides a [listener interface](https://github.com/rohankhayech/PlayableTimeline#listener-interfaces) for observing timeline changes and playback events. 
+The library also supports [contextual events](#contextual-events-and-playback) and provides a [listener interface](#listener-interfaces) for observing timeline changes and playback events. 
 
 ## Getting Started
 A `Timeline` can be created using it's constructor, taking in the type of event and the unit of time to use:
@@ -67,7 +67,7 @@ timeline.addEvent(2, new TimelineEvent() {
     }
 });
 ```
-This can also be shortened to use lambda syntax as shown above in [Getting Started](https://github.com/rohankhayech/PlayableTimeline#getting-started).
+This can also be shortened to use lambda syntax as shown above in [Getting Started](#getting-started).
 
 To create a more complex or reusable event, create a class implementing `TimelineEvent`. The example below shows an event that holds a message and prints it when triggered:
 
