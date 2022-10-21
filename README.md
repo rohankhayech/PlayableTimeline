@@ -120,7 +120,7 @@ Events can also be easily removed from a timeline by passing in a reference:
 timeline.removeEvent(event);
 ```
 
-It also features other operations such as inserting events and iteration. See the [`Timeline`](lib\src\main\java\com\rohankhayech\playabletimeline\Timeline.java) class for more information.
+It also features other operations such as inserting events and iteration. See the [`Timeline`](lib/src/main/java/com/rohankhayech/playabletimeline/Timeline.java) class for more information.
 
 ### Playback
 Timelines can be played via the use of a `TimelinePlayer` object. A timeline player can be initalised by passing in a `Timeline` during construction:
