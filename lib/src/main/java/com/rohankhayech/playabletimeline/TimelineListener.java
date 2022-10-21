@@ -25,7 +25,7 @@ package com.rohankhayech.playabletimeline;
  *
  * @author Rohan Khayech
  */
-public interface TimelineListener {
+public interface TimelineListener<E> {
 
     /**
      * Called before an event has been added, inserted or removed from the timeline.
@@ -48,7 +48,7 @@ public interface TimelineListener {
      * Called when an event has been added to the timeline.
      * @param timestamp The timestamp at which the event was added.
      */
-    default void onEventAdded(long timestamp) {}
+    default void onEventAdded(long timestamp, E event) {}
 
     /**
      * Called when an event has been inserted into the timeline.
@@ -61,7 +61,7 @@ public interface TimelineListener {
      * Called when an event has been removed from the timeline.
      * @param timestamp The timestamp at which the event was removed.
      */
-    default void onEventRemoved(long timestamp) {}
+    default void onEventRemoved(long timestamp, E event) {}
 
     /**
      * May be called before an existing event is modified. This will be called by any internal
@@ -72,7 +72,7 @@ public interface TimelineListener {
      * @throws IllegalStateException If the listener needs to prevent the modification operation,
      * eg. during playback or iteration.
      */
-    default void beforeEventModified(long timestamp) {}
+    default void beforeEventModified(long timestamp, E event) {}
 
     /**
      * May be called when an existing event is modified. This will be called by any internal
@@ -81,7 +81,7 @@ public interface TimelineListener {
      *
      * @param timestamp The timestamp at which the event was modified.
      */
-    default void onEventModified(long timestamp) {}
+    default void onEventModified(long timestamp, E event) {}
 
     /**
      * Called when the duration of the timeline was extended or shortened.

@@ -264,6 +264,7 @@ public class TimelinePlayer<E extends TimelineEvent> implements Closeable {
                                 }
                             } else {
                                 pause(); //Stop playback if there are no more events.
+                                notifyPlaybackFinished();
                             }
                             // Notify listeners
                             notifyPlayheadUpdated();
@@ -358,9 +359,18 @@ public class TimelinePlayer<E extends TimelineEvent> implements Closeable {
     }
 
     /**
+     * Notifies all listeners that playback has reached the end of the timeline.
+     */
+    private void notifyPlaybackFinished() {
+        for (TLPlaybackListener l : listeners) {
+            l.onPlaybackFinished();
+        }
+    }
+
+    /**
      * Anonymous timeline listener class used to listen for updates to the underlying timeline.
      */
-    private final TimelineListener tlListener = new TimelineListener() {
+    private final TimelineListener<E> tlListener = new TimelineListener<>() {
         /**
          * Checks if the timeline is currently playing, preventing modification if true.
          * @throws IllegalStateException If the timeline is currently playing.

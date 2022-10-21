@@ -41,4 +41,7 @@ public interface TLPlaybackListener {
     /** Called when playback is paused or stopped. */
     default void onPlaybackPaused() {}
 
+    /** Called when playback reaches the end of the timeline. */
+    default void onPlaybackFinished() {}
+
 }

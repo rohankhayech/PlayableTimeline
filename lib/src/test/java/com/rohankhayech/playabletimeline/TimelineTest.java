@@ -64,7 +64,7 @@ public class TimelineTest {
     /** Number of default test events. */
     private static final int NUM_EVENTS = 3;
 
-    private TimelineListener l;
+    private TimelineListener<TimelineEvent> l;
 
     @Before
     public void setUp() {
@@ -82,12 +82,12 @@ public class TimelineTest {
         }
 
         // Setup listener
-        l = tl.addListener(new TimelineListener() {
+        l = tl.addListener(new TimelineListener<>() {
             @Override public void beforeTimelineChanged() { notifiedBeforeTLChanged = true; }
             @Override public void onTimelineChanged() { notifiedTLChanged = true; }
-            @Override public void onEventAdded(long t) { notifiedEventAdded = true; }
+            @Override public void onEventAdded(long t, TimelineEvent e) { notifiedEventAdded = true; }
             @Override public void onEventInserted(long t, long i) { notifiedEventInserted = true; }
-            @Override public void onEventRemoved(long t) { notifiedEventRemoved = true; }
+            @Override public void onEventRemoved(long t, TimelineEvent e) { notifiedEventRemoved = true; }
             @Override public void onDurationChanged(long od, long nd) { notifiedDurationChanged = true; }
         });
     }

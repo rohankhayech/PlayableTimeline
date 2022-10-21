@@ -44,7 +44,7 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
     private final TimeUnit unit;
 
     /** List of listeners attached to this timeline. */
-    private final List<TimelineListener> listeners = new LinkedList<>();
+    private final List<TimelineListener<E>> listeners = new LinkedList<>();
 
     /**
      * Constructs a new timeline that with the given frequency unit.
@@ -99,7 +99,7 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
         }
 
         // Notify listeners that the event was added.
-        notifyEventAdded(time);
+        notifyEventAdded(time, event);
     }
 
     /**
@@ -121,7 +121,7 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
                 events.remove(tf);
 
                 // Notify listeners the event was removed.
-                notifyEventRemoved(tf.getTime());
+                notifyEventRemoved(tf.getTime(), event);
 
                 // Notify listeners if duration extended.
                 if (getDuration() < oldDuration) {
@@ -364,7 +364,7 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      * anonymous class.
      * @throws NullPointerException If the specified listener is {@code null}.
      */
-    public TimelineListener addListener(TimelineListener l) {
+    public TimelineListener<E> addListener(TimelineListener<E> l) {
         Objects.requireNonNull(l,"Cannot attach null listener.");
         listeners.add(l);
         return l;
@@ -374,7 +374,7 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      * Detaches the specified listener from this timeline, if attached.
      * @param l The timeline listener to remove.
      */
-    public void removeListener(TimelineListener l) {
+    public void removeListener(TimelineListener<E> l) {
         listeners.remove(l);
     }
 
@@ -385,7 +385,7 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      * eg. during playback or iteration.
      */
     private void notifyBeforeTimelineChanged() throws IllegalStateException {
-        for (TimelineListener l : listeners) {
+        for (TimelineListener<E> l : listeners) {
             l.beforeTimelineChanged();
         }
     }
@@ -394,7 +394,7 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      * Notifies all listeners that the timeline has been modified.
      */
     private void notifyTimelineChanged() {
-        for (TimelineListener l : listeners) {
+        for (TimelineListener<E> l : listeners) {
             l.onTimelineChanged();
         }
     }
@@ -403,9 +403,9 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      * Notifies all listeners that an event has been added to the timeline.
      * @param timestamp The timestamp at which the event was added.
      */
-    private void notifyEventAdded(long timestamp) {
-        for (TimelineListener l : listeners) {
-            l.onEventAdded(timestamp);
+    private void notifyEventAdded(long timestamp, E event) {
+        for (TimelineListener<E> l : listeners) {
+            l.onEventAdded(timestamp, event);
         }
         notifyTimelineChanged();
     }
@@ -416,7 +416,7 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      * @param interval The time at which all subsequent events were delayed.
      */
     private void notifyEventInserted(long timestamp, long interval) {
-        for (TimelineListener l : listeners) {
+        for (TimelineListener<E> l : listeners) {
             l.onEventInserted(timestamp, interval);
         }
         notifyTimelineChanged();
@@ -426,9 +426,9 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      * Notifies all listeners that an event has been removed from the timeline.
      * @param timestamp The timestamp at which the event was removed.
      */
-    private void notifyEventRemoved(long timestamp) {
-        for (TimelineListener l : listeners) {
-            l.onEventRemoved(timestamp);
+    private void notifyEventRemoved(long timestamp, E event) {
+        for (TimelineListener<E> l : listeners) {
+            l.onEventRemoved(timestamp, event);
         }
         notifyTimelineChanged();
     }
@@ -438,7 +438,7 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      * @param oldDuration The previous duration of the timeline.
      */
     private void notifyDurationChanged(long oldDuration) {
-        for (TimelineListener l : listeners) {
+        for (TimelineListener<E> l : listeners) {
             l.onDurationChanged(oldDuration,getDuration());
         }
         notifyTimelineChanged();
@@ -451,9 +451,9 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      * @throws IllegalStateException If a listener needs to prevent the modification operation,
      * eg. during playback or iteration.
      */
-    public void notifyBeforeEventModified(long timestamp) throws IllegalStateException {
-        for (TimelineListener l : listeners) {
-            l.beforeEventModified(timestamp);
+    public void notifyBeforeEventModified(long timestamp, E event) throws IllegalStateException {
+        for (TimelineListener<E> l : listeners) {
+            l.beforeEventModified(timestamp, event);
         }
         notifyBeforeTimelineChanged();
     }
@@ -463,9 +463,9 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      * This should be called by any external class that modifies an event returned from this timeline.
      * @param timestamp The timestamp of the modified event.
      */
-    public void notifyEventModified(long timestamp) {
-        for (TimelineListener l : listeners) {
-            l.onEventModified(timestamp);
+    public void notifyEventModified(long timestamp, E event) {
+        for (TimelineListener<E> l : listeners) {
+            l.onEventModified(timestamp, event);
         }
         notifyTimelineChanged();
     }
