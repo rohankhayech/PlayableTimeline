@@ -40,11 +40,12 @@ public final class TimelineFrame<E extends TimelineEvent> implements Comparable<
      *
      * @param time The time at which the event should be triggered, in the timeline's specified units.
      * @param event The timeline event to be triggered.
+     * @throws IllegalArgumentException If time is < 0.
      * @throws NullPointerException If the specified event is {@code null}.
      */
     TimelineFrame(long time, E event) {
         this.event = Objects.requireNonNull(event, "Event cannot be null.");
-        this.time = time;
+        setTime(time);
     }
 
     /**
@@ -77,8 +78,10 @@ public final class TimelineFrame<E extends TimelineEvent> implements Comparable<
      * Calling method is responsible for preserving the chronological order of events in the
      * timeline.
      * @param time The time at which the event should be triggered.
+     * @throws IllegalArgumentException If time < 0.
      */
     void setTime(long time) {
+        if (time < 0) throw new IllegalArgumentException("Time cannot be negative.");
         this.time = time;
     }
 

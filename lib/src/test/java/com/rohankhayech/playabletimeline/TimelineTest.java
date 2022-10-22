@@ -122,9 +122,9 @@ public class TimelineTest {
         assertEquals("Events not in chronological order.", e[2], events.get(2).getEvent());
 
         // Test add event.
-        TimelineEvent e = () -> {};
-        tl.addEvent(EVENT_DELAY/2, e);
-        assertEquals("Event not added at specified time.", e, tl.get(EVENT_DELAY/2));
+        TimelineEvent ev = () -> {};
+        tl.addEvent(EVENT_DELAY/2, ev);
+        assertEquals("Event not added at specified time.", ev, tl.get(EVENT_DELAY/2));
 
         // Check listener notifications.
         assertTrue("No notification before timeline changed.",notifiedBeforeTLChanged);
@@ -133,11 +133,14 @@ public class TimelineTest {
         assertFalse("False notification of duration change.",notifiedDurationChanged);
 
         // Check duration notification.
-        tl.addEvent(EVENT_DELAY*3, e);
+        tl.addEvent(EVENT_DELAY*3, ev);
         assertTrue("No notification of duration.",notifiedDurationChanged);
 
         // Check cannot add null
         assertThrows("Added null without exception.", NullPointerException.class,()->tl.addEvent(0, null));
+
+        // Check cannot add events at negative timestamp.
+        assertThrows("Added event at negative timestamp.", IllegalArgumentException.class,()->tl.addEvent(-1, ev));
     }
 
     @Test
@@ -181,6 +184,9 @@ public class TimelineTest {
         assertTrue("No notification of timeline changed.",notifiedTLChanged);
         assertTrue("No notification of duration change.",notifiedDurationChanged);
         assertTrue("No notification of event inserted.",notifiedEventInserted);
+
+        // Check with negative interval.
+        assertThrows("Delayed events by negative interval.", IllegalArgumentException.class, ()->tl.insertAndDelay(0, -1, e[0]));
     }
 
     @Test

@@ -60,7 +60,7 @@ public class TimelineSet<E extends TimelineEvent> extends Timeline<E> {
      * @param time  The time at which the event should be triggered, in the timeline's specified units.
      * @param event The timeline event to be triggered when the specified time is reached.
      *
-     * @throws IllegalArgumentException If an event already exists at the specified timestamp.
+     * @throws IllegalArgumentException If an event already exists at the specified timestamp, or time is < 0.
      * @throws NullPointerException If the specified event is {@code null}.
      * @throws IllegalStateException If the modification operation is prevented by an object using the timeline.
      */

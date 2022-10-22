@@ -79,11 +79,13 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      * @param time The time at which the event should be triggered, in the timeline's specified units.
      * @param event The timeline event to be triggered when the specified time is reached.
      *
+     * @throws IllegalArgumentException If time is < 0.
      * @throws NullPointerException If the specified event is {@code null}.
      * @throws IllegalStateException If the modification operation is prevented by an object using the timeline.
      */
     public void addEvent(long time, E event) {
         Objects.requireNonNull(event, "Cannot add null event to the timeline.");
+        if (time < 0) throw new IllegalArgumentException("Cannot add event at a negative timestamp.");
 
         notifyBeforeTimelineChanged();
 
@@ -140,11 +142,14 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      * @param interval The time to delay all subsequent events, in the timeline's specified units.
      * @param event The timeline event to be triggered when the specified time is reached.
      *
+     * @throws IllegalArgumentException If time is < 0.
      * @throws NullPointerException If the specified event is {@code null}.
      * @throws IllegalStateException If the modification operation is prevented by an object using the timeline.
      */
     public void insertAndDelay(long time, long interval, E event) {
         Objects.requireNonNull(event,"Cannot add null event to the timeline.");
+        if (time < 0) throw new IllegalArgumentException("Cannot add event at a negative timestamp.");
+        if (interval < 0) throw new IllegalArgumentException("Cannot delay events by a negative interval.");
 
         notifyBeforeTimelineChanged();
 
@@ -178,6 +183,7 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      * @param interval The time to delay subsequent events if needed, in the timeline's specified units.
      * @param event The timeline event to be triggered when the specified time is reached.
      *
+     * @throws IllegalArgumentException If time is < 0.
      * @throws NullPointerException If the specified event is {@code null}.
      * @throws IllegalStateException If the modification operation is prevented by an object using the timeline.
      */
