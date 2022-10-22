@@ -309,8 +309,6 @@ public class TimelineTest {
         assertFalse("Returns true when timeline is not empty.", tl.isEmpty());
     }
 
-    // TODO: Test getApprox().
-
     @Test
     public void testGetUnit() {
         assertEquals("Unit not init correctly.",TimeUnit.SECONDS,tl.getUnit());

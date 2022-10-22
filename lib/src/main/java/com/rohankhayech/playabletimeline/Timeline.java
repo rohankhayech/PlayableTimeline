@@ -281,24 +281,6 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
     }
 
     /**
-     * Divides the timeline into steps of {@code size} duration and retrieves all events that are placed
-     * at approximately the specified step. This method can be used to display events at a lower
-     * fidelity than they are played at.
-     *
-     * @param step The step to retrieve events at.
-     * @param size The duration of each step in {@code unit} units.
-     * @return A list of events placed at approximately the specified step.
-     */
-    public List<E> getApprox(long step, long size) {
-        // Calculate approx step and filter for those that match step.
-        return events.stream()
-            .filter(tf ->
-                step == Math.round((double)tf.getTime()/(double)size))
-            .map(TimelineFrame::getEvent)
-            .collect(Collectors.toList());
-    }
-
-    /**
      * @return The unit of frequency at which the timeline should run.
      */
     public TimeUnit getUnit() {
