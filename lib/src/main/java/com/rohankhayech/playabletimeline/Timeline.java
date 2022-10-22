@@ -28,6 +28,8 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * The Timeline class represents a playable timeline of events where events are placed at a specific timeframe along the timeline.
@@ -313,6 +315,13 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
         } else return 0;
     }
 
+    /**
+     * @return The number of events in this timeline.
+     */
+    public int count() {
+        return events.size();
+    }
+
     /** @return {@code true} if the this timeline contains no events. */
     public boolean isEmpty() {
         return events.isEmpty();
@@ -323,6 +332,26 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      */
     public Iterator<TimelineFrame<E>> iterator() {
         return toList().listIterator();
+    }
+
+    /**
+     * Removes all events from this timeline. The timeline will be empty after this method returns.
+     *
+     * @implNote This method will notify listeners that the timeline has been cleared and changed,
+     * but will not notify listeners of each individual event's removal.
+     */
+    public void clear() {
+        if (!isEmpty()) {
+            notifyBeforeTimelineChanged();
+
+            long oldDuration = getDuration();
+
+            events.clear();
+
+            notifyDurationChanged(oldDuration);
+
+            notifyTimelineCleared();
+        }
     }
 
     /**
@@ -445,6 +474,16 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
     }
 
     /**
+     * Notifies all listeners that the timeline was cleared.
+     */
+    private void notifyTimelineCleared() {
+        for (TimelineListener l : listeners) {
+            l.onTimelineCleared();
+        }
+        notifyTimelineChanged();
+    }
+
+    /**
      * Notifies all listeners that the specified event will be modified.
      * This should be called by any external class that modifies an event returned from this timeline.
      * @param timestamp The timestamp of the event to be modified.
@@ -483,6 +522,14 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
     @Override
     public int hashCode() {
         return Objects.hash(events, unit);
+    }
+
+    /**
+     * Returns a sequential Stream with this timeline as its source.
+     * @return A sequential Stream over the events in this timeline.
+     */
+    public Stream<TimelineFrame<E>> stream() {
+        return StreamSupport.stream(spliterator(), false);
     }
 
     @Override

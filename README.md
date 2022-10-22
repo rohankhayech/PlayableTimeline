@@ -185,6 +185,7 @@ timeline.addListener(new TimelineListener() {
     @Override public void onEventInserted(long timestamp, long interval) {...}
     @Override public void onEventRemoved(long timestamp) {...}
     @Override public void onDurationChanged(long oldDuration, long newDuration) {...}
+    @Override public void onTimelineCleared() {...}
 });
 ```
 The `beforeTimelineChanged` callback can also throw an `IllegalStateException` to prevent a modification operation if required, such as during playback.

@@ -36,6 +36,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * Test harness for the Timeline data structure class.
@@ -49,7 +50,7 @@ public class TimelineTest {
 
     /** Listener callback checks. */
     private boolean notifiedBeforeTLChanged, notifiedTLChanged, notifiedEventAdded, notifiedEventInserted,
-        notifiedEventRemoved, notifiedDurationChanged;
+        notifiedEventRemoved, notifiedDurationChanged, notifiedTLCleared;
 
     /** Array of test events. */
     private TimelineEvent[] e;
@@ -89,6 +90,7 @@ public class TimelineTest {
             @Override public void onEventInserted(long t, long i) { notifiedEventInserted = true; }
             @Override public void onEventRemoved(long t) { notifiedEventRemoved = true; }
             @Override public void onDurationChanged(long od, long nd) { notifiedDurationChanged = true; }
+            @Override public void onTimelineCleared() { notifiedTLCleared = true; }
         });
     }
 
@@ -417,6 +419,44 @@ public class TimelineTest {
         assertThrows("Attached null listener.", NullPointerException.class,()-> tl.addListener(null));
     }
 
+    @Test
+    public void testClear() {
+        addDefaultEvents();
+
+        tl.clear();
+
+        // Check timeline has been cleared.
+        assertTrue("Timeline still contains events after clearing.", tl.isEmpty());
+
+        // Check listeners notified.
+        assertTrue("No notification before timeline changed.",notifiedBeforeTLChanged);
+        assertTrue("No notification of timeline changed.",notifiedTLChanged);
+        assertTrue("No notification of duration change.", notifiedDurationChanged);
+        assertTrue("No notification of timeline cleared.", notifiedTLCleared);
+    }
+
+    @Test
+    public void testCount() {
+        // Check empty tl.
+        assertEquals("Returned incorrect number of events.", 0, tl.count());
+
+        // Check with events.
+        addDefaultEvents();
+        assertEquals("Returned incorrect number of events.", tl.toList().size(), tl.count());
+    }
+
+    @Test
+    public void testStream() {
+        addDefaultEvents();
+
+        List<TimelineFrame<TimelineEvent>> streamEvents = tl.stream().collect(Collectors.toList());
+        List<TimelineFrame<TimelineEvent>> tlEvents = tl.toList();
+
+        // Check stream equals stream from underlying list.
+        assertTrue("Stream does not contain all tl events.", streamEvents.containsAll(tlEvents));
+        assertTrue("Stream contains extra events.", tlEvents.containsAll(streamEvents));
+    }
+
     // Helper Methods
 
     /**
@@ -427,6 +467,8 @@ public class TimelineTest {
         notifiedTLChanged = false;
         notifiedEventAdded = false;
         notifiedEventInserted = false;
-        notifiedEventRemoved = notifiedDurationChanged = false;
+        notifiedEventRemoved = false;
+        notifiedDurationChanged = false;
+        notifiedTLCleared = false;
     }
 }
