@@ -63,13 +63,13 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      * @param o The timeline to copy.
      * @throws NullPointerException If the specified timeline is {@code null}.
      */
-    public Timeline(Timeline<E> o) {
+    public Timeline(Timeline<? extends E> o) {
         Objects.requireNonNull(o,"Timeline to copy cannot be null.");
 
         this.unit = o.unit;
 
         // Create copy of timeline frames.
-        for(TimelineFrame<E> tf : o.events) {
+        for(TimelineFrame<? extends E> tf : o.events) {
             events.add(new TimelineFrame<>(tf));
         }
     }

@@ -17,7 +17,6 @@ dependencies {
     // Use JUnit test framework.
     testImplementation 'junit:junit:4.13.2'
 
-    // This dependency is exported to consumers, that is to say found on their compile classpath.
     implementation 'org.apache.commons:commons-collections4:4.4'
 }
 

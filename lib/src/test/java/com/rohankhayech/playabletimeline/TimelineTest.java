@@ -415,6 +415,13 @@ public class TimelineTest {
 
         // Check copy of null fails.
         assertThrows("Copied null timeline.",NullPointerException.class,()-> new Timeline<>((Timeline<TimelineEvent>)null));
+
+        // Check event subclass
+        Timeline<MessageEvent> tl2 = new Timeline<>(TimeUnit.MILLISECONDS);
+        tl2.addEvent(0, new MessageEvent(""));
+        copy = new Timeline<>(tl2);
+        assertNotSame("Copy should return a new object.", tl2, copy);
+        assertEquals("Copy should be equal.", tl2, copy);
     }
 
     @Test

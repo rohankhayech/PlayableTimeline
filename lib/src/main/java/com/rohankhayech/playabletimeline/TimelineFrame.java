@@ -27,7 +27,7 @@ import java.util.Objects;
  *
  * @author Rohan Khayech
  */
-public final class TimelineFrame<E extends TimelineEvent> implements Comparable<TimelineFrame<E>> {
+public final class TimelineFrame<E extends TimelineEvent> implements Comparable<TimelineFrame<? extends TimelineEvent>> {
 
     /** The timeline event to be triggered. */
     private final E event;
@@ -53,7 +53,7 @@ public final class TimelineFrame<E extends TimelineEvent> implements Comparable<
      * @param o The timeline frame to copy.
      * @throws NullPointerException If the specified timeline frame is {@code null}.
      */
-    TimelineFrame(TimelineFrame<E> o) {
+    TimelineFrame(TimelineFrame<? extends E> o) {
         Objects.requireNonNull(o,"Timeline frame to copy cannot be null.");
         this.event = o.event;
         this.time = o.time;
@@ -112,7 +112,7 @@ public final class TimelineFrame<E extends TimelineEvent> implements Comparable<
      * is less than, equal to, or greater than that of the specified timeframe.
      */
     @Override
-    public int compareTo(TimelineFrame<E> o) {
+    public int compareTo(TimelineFrame<? extends TimelineEvent> o) {
         return Long.signum(time - o.getTime());
     }
 }
