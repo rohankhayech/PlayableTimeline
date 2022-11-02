@@ -29,18 +29,18 @@ import org.junit.Test;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Test harness for the TimelineSet data structure class.
+ * Test harness for the TimelineMap data structure class.
  *
  * @author Rohan Khayech
  */
-public class TimelineSetTest {
+public class TimelineMapTest {
 
-    /** Test TimelineSet object. */
+    /** Test TimelineMap object. */
     Timeline<TimelineEvent> tl;
 
     @Before
     public void setUp() {
-        tl = new TimelineSet<>(TimeUnit.SECONDS);
+        tl = new TimelineMap<>(TimeUnit.SECONDS);
     }
 
     @Test
