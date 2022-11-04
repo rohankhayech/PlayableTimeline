@@ -36,6 +36,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * Test harness for the Timeline data structure class.
@@ -49,7 +50,7 @@ public class TimelineTest {
 
     /** Listener callback checks. */
     private boolean notifiedBeforeTLChanged, notifiedTLChanged, notifiedEventAdded, notifiedEventInserted,
-        notifiedEventRemoved, notifiedDurationChanged;
+        notifiedEventRemoved, notifiedDurationChanged, notifiedTLCleared;
 
     /** Array of test events. */
     private TimelineEvent[] e;
@@ -89,6 +90,7 @@ public class TimelineTest {
             @Override public void onEventInserted(long t, long i) { notifiedEventInserted = true; }
             @Override public void onEventRemoved(long t, TimelineEvent e) { notifiedEventRemoved = true; }
             @Override public void onDurationChanged(long od, long nd) { notifiedDurationChanged = true; }
+            @Override public void onTimelineCleared() { notifiedTLCleared = true; }
         });
     }
 
@@ -120,9 +122,9 @@ public class TimelineTest {
         assertEquals("Events not in chronological order.", e[2], events.get(2).getEvent());
 
         // Test add event.
-        TimelineEvent e = () -> {};
-        tl.addEvent(EVENT_DELAY/2, e);
-        assertEquals("Event not added at specified time.", e, tl.get(EVENT_DELAY/2));
+        TimelineEvent ev = () -> {};
+        tl.addEvent(EVENT_DELAY/2, ev);
+        assertEquals("Event not added at specified time.", ev, tl.get(EVENT_DELAY/2));
 
         // Check listener notifications.
         assertTrue("No notification before timeline changed.",notifiedBeforeTLChanged);
@@ -131,11 +133,14 @@ public class TimelineTest {
         assertFalse("False notification of duration change.",notifiedDurationChanged);
 
         // Check duration notification.
-        tl.addEvent(EVENT_DELAY*3, e);
+        tl.addEvent(EVENT_DELAY*3, ev);
         assertTrue("No notification of duration.",notifiedDurationChanged);
 
         // Check cannot add null
         assertThrows("Added null without exception.", NullPointerException.class,()->tl.addEvent(0, null));
+
+        // Check cannot add events at negative timestamp.
+        assertThrows("Added event at negative timestamp.", IllegalArgumentException.class,()->tl.addEvent(-1, ev));
     }
 
     @Test
@@ -179,6 +184,9 @@ public class TimelineTest {
         assertTrue("No notification of timeline changed.",notifiedTLChanged);
         assertTrue("No notification of duration change.",notifiedDurationChanged);
         assertTrue("No notification of event inserted.",notifiedEventInserted);
+
+        // Check with negative interval.
+        assertThrows("Delayed events by negative interval.", IllegalArgumentException.class, ()->tl.insertAndDelay(0, -1, e[0]));
     }
 
     @Test
@@ -307,8 +315,6 @@ public class TimelineTest {
         assertFalse("Returns true when timeline is not empty.", tl.isEmpty());
     }
 
-    // TODO: Test getApprox().
-
     @Test
     public void testGetUnit() {
         assertEquals("Unit not init correctly.",TimeUnit.SECONDS,tl.getUnit());
@@ -409,12 +415,57 @@ public class TimelineTest {
 
         // Check copy of null fails.
         assertThrows("Copied null timeline.",NullPointerException.class,()-> new Timeline<>((Timeline<TimelineEvent>)null));
+
+        // Check event subclass
+        Timeline<MessageEvent> tl2 = new Timeline<>(TimeUnit.MILLISECONDS);
+        tl2.addEvent(0, new MessageEvent(""));
+        copy = new Timeline<>(tl2);
+        assertNotSame("Copy should return a new object.", tl2, copy);
+        assertEquals("Copy should be equal.", tl2, copy);
     }
 
     @Test
     public void testNullListener() {
         // Attempt attaching null listener.
         assertThrows("Attached null listener.", NullPointerException.class,()-> tl.addListener(null));
+    }
+
+    @Test
+    public void testClear() {
+        addDefaultEvents();
+
+        tl.clear();
+
+        // Check timeline has been cleared.
+        assertTrue("Timeline still contains events after clearing.", tl.isEmpty());
+
+        // Check listeners notified.
+        assertTrue("No notification before timeline changed.",notifiedBeforeTLChanged);
+        assertTrue("No notification of timeline changed.",notifiedTLChanged);
+        assertTrue("No notification of duration change.", notifiedDurationChanged);
+        assertTrue("No notification of timeline cleared.", notifiedTLCleared);
+    }
+
+    @Test
+    public void testCount() {
+        // Check empty tl.
+        assertEquals("Returned incorrect number of events.", 0, tl.count());
+
+        // Check with events.
+        addDefaultEvents();
+        assertEquals("Returned incorrect number of events.", tl.toList().size(), tl.count());
+    }
+
+    @Test
+    public void testStream() {
+        addDefaultEvents();
+
+        List<TimelineFrame<TimelineEvent>> streamEvents = tl.stream().collect(Collectors.toList());
+        List<TimelineFrame<TimelineEvent>> tlEvents = tl.toList();
+
+        // Check stream equals stream from underlying list.
+        assertTrue("Stream does not contain all tl events.", streamEvents.containsAll(tlEvents));
+        assertTrue("Stream contains extra events.", tlEvents.containsAll(streamEvents));
     }
 
     // Helper Methods
@@ -427,6 +478,8 @@ public class TimelineTest {
         notifiedTLChanged = false;
         notifiedEventAdded = false;
         notifiedEventInserted = false;
-        notifiedEventRemoved = notifiedDurationChanged = false;
+        notifiedEventRemoved = false;
+        notifiedDurationChanged = false;
+        notifiedTLCleared = false;
     }
 }

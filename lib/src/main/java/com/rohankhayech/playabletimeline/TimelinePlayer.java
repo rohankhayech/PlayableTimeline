@@ -83,7 +83,7 @@ public class TimelinePlayer<E extends TimelineEvent> implements Closeable {
         tl.addListener(tlListener);
 
         // Start the playback thread.
-        thread = new Thread(()->run());
+        thread = new Thread(this::run);
         thread.start();
     }
 

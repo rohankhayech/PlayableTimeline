@@ -63,6 +63,9 @@ public interface TimelineListener<E> {
      */
     default void onEventRemoved(long timestamp, E event) {}
 
+    /** Called when the timeline is cleared of all events.*/
+    default void onTimelineCleared() {}
+
     /**
      * May be called before an existing event is modified. This will be called by any internal
      * function that modifies an event, however it cannot be guaranteed that this method will be

@@ -28,6 +28,8 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * The Timeline class represents a playable timeline of events where events are placed at a specific timeframe along the timeline.
@@ -61,13 +63,13 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      * @param o The timeline to copy.
      * @throws NullPointerException If the specified timeline is {@code null}.
      */
-    public Timeline(Timeline<E> o) {
+    public Timeline(Timeline<? extends E> o) {
         Objects.requireNonNull(o,"Timeline to copy cannot be null.");
 
         this.unit = o.unit;
 
         // Create copy of timeline frames.
-        for(TimelineFrame<E> tf : o.events) {
+        for(TimelineFrame<? extends E> tf : o.events) {
             events.add(new TimelineFrame<>(tf));
         }
     }
@@ -77,11 +79,13 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      * @param time The time at which the event should be triggered, in the timeline's specified units.
      * @param event The timeline event to be triggered when the specified time is reached.
      *
+     * @throws IllegalArgumentException If time is < 0.
      * @throws NullPointerException If the specified event is {@code null}.
      * @throws IllegalStateException If the modification operation is prevented by an object using the timeline.
      */
     public void addEvent(long time, E event) {
         Objects.requireNonNull(event, "Cannot add null event to the timeline.");
+        if (time < 0) throw new IllegalArgumentException("Cannot add event at a negative timestamp.");
 
         notifyBeforeTimelineChanged();
 
@@ -138,11 +142,14 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      * @param interval The time to delay all subsequent events, in the timeline's specified units.
      * @param event The timeline event to be triggered when the specified time is reached.
      *
+     * @throws IllegalArgumentException If time is < 0.
      * @throws NullPointerException If the specified event is {@code null}.
      * @throws IllegalStateException If the modification operation is prevented by an object using the timeline.
      */
     public void insertAndDelay(long time, long interval, E event) {
         Objects.requireNonNull(event,"Cannot add null event to the timeline.");
+        if (time < 0) throw new IllegalArgumentException("Cannot add event at a negative timestamp.");
+        if (interval < 0) throw new IllegalArgumentException("Cannot delay events by a negative interval.");
 
         notifyBeforeTimelineChanged();
 
@@ -176,6 +183,7 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      * @param interval The time to delay subsequent events if needed, in the timeline's specified units.
      * @param event The timeline event to be triggered when the specified time is reached.
      *
+     * @throws IllegalArgumentException If time is < 0.
      * @throws NullPointerException If the specified event is {@code null}.
      * @throws IllegalStateException If the modification operation is prevented by an object using the timeline.
      */
@@ -279,24 +287,6 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
     }
 
     /**
-     * Divides the timeline into steps of {@code size} duration and retrieves all events that are placed
-     * at approximately the specified step. This method can be used to display events at a lower
-     * fidelity than they are played at.
-     *
-     * @param step The step to retrieve events at.
-     * @param size The duration of each step in {@code unit} units.
-     * @return A list of events placed at approximately the specified step.
-     */
-    public List<E> getApprox(long step, long size) {
-        // Calculate approx step and filter for those that match step.
-        return events.stream()
-            .filter(tf ->
-                step == Math.round((double)tf.getTime()/(double)size))
-            .map(TimelineFrame::getEvent)
-            .collect(Collectors.toList());
-    }
-
-    /**
      * @return The unit of frequency at which the timeline should run.
      */
     public TimeUnit getUnit() {
@@ -313,6 +303,13 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
         } else return 0;
     }
 
+    /**
+     * @return The number of events in this timeline.
+     */
+    public int count() {
+        return events.size();
+    }
+
     /** @return {@code true} if the this timeline contains no events. */
     public boolean isEmpty() {
         return events.isEmpty();
@@ -323,6 +320,26 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      */
     public Iterator<TimelineFrame<E>> iterator() {
         return toList().listIterator();
+    }
+
+    /**
+     * Removes all events from this timeline. The timeline will be empty after this method returns.
+     *
+     * @implNote This method will notify listeners that the timeline has been cleared and changed,
+     * but will not notify listeners of each individual event's removal.
+     */
+    public void clear() {
+        if (!isEmpty()) {
+            notifyBeforeTimelineChanged();
+
+            long oldDuration = getDuration();
+
+            events.clear();
+
+            notifyDurationChanged(oldDuration);
+
+            notifyTimelineCleared();
+        }
     }
 
     /**
@@ -445,6 +462,16 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
     }
 
     /**
+     * Notifies all listeners that the timeline was cleared.
+     */
+    private void notifyTimelineCleared() {
+        for (TimelineListener l : listeners) {
+            l.onTimelineCleared();
+        }
+        notifyTimelineChanged();
+    }
+
+    /**
      * Notifies all listeners that the specified event will be modified.
      * This should be called by any external class that modifies an event returned from this timeline.
      * @param timestamp The timestamp of the event to be modified.
@@ -483,6 +510,14 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
     @Override
     public int hashCode() {
         return Objects.hash(events, unit);
+    }
+
+    /**
+     * Returns a sequential Stream with this timeline as its source.
+     * @return A sequential Stream over the events in this timeline.
+     */
+    public Stream<TimelineFrame<E>> stream() {
+        return StreamSupport.stream(spliterator(), false);
     }
 
     @Override

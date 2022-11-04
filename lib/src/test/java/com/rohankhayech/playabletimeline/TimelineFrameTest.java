@@ -111,10 +111,10 @@ public class TimelineFrameTest {
     @Test
     public void testCompareTo() {
         // Equal timestamp.
-        TimelineFrame<TimelineEvent> f2 = new TimelineFrame<>(0, event);
+        TimelineFrame<MessageEvent> f2 = new TimelineFrame<>(0, new MessageEvent(""));
         assertEquals("compareTo() should return 0 for frames with equal timestamps.", 0, frame.compareTo(f2));
 
-        f2 = new TimelineFrame<>(1, event);
+        f2 = new TimelineFrame<>(1, new MessageEvent(""));
 
         // Lesser timestamp
         assertEquals("compareTo() should return -1 for a frame with lesser timestamp.", -1, frame.compareTo(f2));
@@ -141,5 +141,11 @@ public class TimelineFrameTest {
 
         // Check copy of null fails.
         assertThrows("Copied null timeline frame.",NullPointerException.class,()-> new TimelineFrame<>(null));
+
+        // Check event subclass
+        TimelineFrame<MessageEvent> f2 = new TimelineFrame<>(1, new MessageEvent(""));
+        copy = new TimelineFrame<>(f2);
+        assertNotSame("Copy should return a new object.", f2, copy);
+        assertEquals("Copy should be equal.", f2, copy);
     }
 }

@@ -27,7 +27,7 @@ import java.util.Objects;
  *
  * @author Rohan Khayech
  */
-public final class TimelineFrame<E extends TimelineEvent> implements Comparable<TimelineFrame<E>> {
+public final class TimelineFrame<E extends TimelineEvent> implements Comparable<TimelineFrame<? extends TimelineEvent>> {
 
     /** The timeline event to be triggered. */
     private final E event;
@@ -40,11 +40,12 @@ public final class TimelineFrame<E extends TimelineEvent> implements Comparable<
      *
      * @param time The time at which the event should be triggered, in the timeline's specified units.
      * @param event The timeline event to be triggered.
+     * @throws IllegalArgumentException If time is < 0.
      * @throws NullPointerException If the specified event is {@code null}.
      */
     TimelineFrame(long time, E event) {
         this.event = Objects.requireNonNull(event, "Event cannot be null.");
-        this.time = time;
+        setTime(time);
     }
 
     /**
@@ -52,7 +53,7 @@ public final class TimelineFrame<E extends TimelineEvent> implements Comparable<
      * @param o The timeline frame to copy.
      * @throws NullPointerException If the specified timeline frame is {@code null}.
      */
-    TimelineFrame(TimelineFrame<E> o) {
+    TimelineFrame(TimelineFrame<? extends E> o) {
         Objects.requireNonNull(o,"Timeline frame to copy cannot be null.");
         this.event = o.event;
         this.time = o.time;
@@ -77,8 +78,10 @@ public final class TimelineFrame<E extends TimelineEvent> implements Comparable<
      * Calling method is responsible for preserving the chronological order of events in the
      * timeline.
      * @param time The time at which the event should be triggered.
+     * @throws IllegalArgumentException If time < 0.
      */
     void setTime(long time) {
+        if (time < 0) throw new IllegalArgumentException("Time cannot be negative.");
         this.time = time;
     }
 
@@ -109,7 +112,7 @@ public final class TimelineFrame<E extends TimelineEvent> implements Comparable<
      * is less than, equal to, or greater than that of the specified timeframe.
      */
     @Override
-    public int compareTo(TimelineFrame<E> o) {
+    public int compareTo(TimelineFrame<? extends TimelineEvent> o) {
         return Long.signum(time - o.getTime());
     }
 }

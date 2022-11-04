@@ -23,15 +23,15 @@ package com.rohankhayech.playabletimeline;
 import java.util.concurrent.TimeUnit;
 
 /**
- * The Timeline Set class represents a playable timeline of events where events are placed at a specific timeframe along the timeline.
- * Additionally, it restricts the base Timeline class by only allowing one event to be placed at each timestamp.
+ * The Timeline Map class represents a playable timeline of events where events are placed at a specific timeframe along the timeline.
+ * Additionally, it restricts the base Timeline class by only allowing one event to be placed at each timestamp, analogous to how a map only allows one value for each key.
  *
  * @author Rohan Khayech
  *
  * @param <E> Type of events the timeline holds.
 
  */
-public class TimelineSet<E extends TimelineEvent> extends Timeline<E> {
+public class TimelineMap<E extends TimelineEvent> extends Timeline<E> {
 
     /**
      * Constructs a new timeline set that with the given frequency unit.
@@ -39,7 +39,7 @@ public class TimelineSet<E extends TimelineEvent> extends Timeline<E> {
      * @param unit Unit of frequency at which the timeline should run.
      * @throws NullPointerException If the specified time unit is {@code null}.
      */
-    public TimelineSet(TimeUnit unit) {
+    public TimelineMap(TimeUnit unit) {
         super(unit);
     }
 
@@ -50,7 +50,7 @@ public class TimelineSet<E extends TimelineEvent> extends Timeline<E> {
      * @param o The timeline to copy.
      * @throws NullPointerException If the specified timeline is {@code null}.
      */
-    public TimelineSet(TimelineSet<E> o) {
+    public TimelineMap(TimelineMap<? extends E> o) {
         super(o);
     }
 
@@ -60,7 +60,7 @@ public class TimelineSet<E extends TimelineEvent> extends Timeline<E> {
      * @param time  The time at which the event should be triggered, in the timeline's specified units.
      * @param event The timeline event to be triggered when the specified time is reached.
      *
-     * @throws IllegalArgumentException If an event already exists at the specified timestamp.
+     * @throws IllegalArgumentException If an event already exists at the specified timestamp, or time is < 0.
      * @throws NullPointerException If the specified event is {@code null}.
      * @throws IllegalStateException If the modification operation is prevented by an object using the timeline.
      */

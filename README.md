@@ -185,6 +185,7 @@ timeline.addListener(new TimelineListener<E>() {
     @Override public void onEventInserted(long timestamp, long interval) {...}
     @Override public void onEventRemoved(long timestamp, E event) {...}
     @Override public void onDurationChanged(long oldDuration, long newDuration) {...}
+    @Override public void onTimelineCleared() {...}
 });
 ```
 The `beforeTimelineChanged` callback can also throw an `IllegalStateException` to prevent a modification operation if required, such as during playback.
@@ -231,13 +232,13 @@ The player can be used in the same way as a standard timeline player. The contex
 cPlayer.play();
 ```
 
-### Timeline Set
-This library also provides a `TimelineSet` data structure which, similar to the `Set` interface in the standard library, only allows one event to be placed at each index (in this case at each timestamp). 
+### Timeline Map
+This library also provides a `TimelineMap` data structure which, similar to the `Map` interface in the standard library, only allows one event to be placed at each timestamp. 
 
-A timeline set can be created as follows:
+A timeline map can be created as follows:
 ```java
 // Create a new timeline that only allows one event at any specified time.
-Timeline<TimelineEvent> timelineSet = new TimelineSet<>(TimeUnit.SECONDS);
+Timeline<TimelineEvent> timelineMap = new TimelineMap<>(TimeUnit.SECONDS);
 ```
 
-The timeline set behaves the same way as a standard `Timeline`, except that attempting to add an event at a timestamp where an event already exists will result in an exception.
+The timeline map behaves the same way as a standard `Timeline`, except that attempting to add an event at a timestamp where an event already exists will result in an exception.
