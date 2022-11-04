@@ -183,6 +183,7 @@ timeline.addListener(new TimelineListener<E>() {
     @Override public void onTimelineChanged() {...}
     @Override public void onEventAdded(long t, E event) {...}
     @Override public void onEventInserted(long timestamp, long interval) {...}
+    @Override public void onEventShifted(long oldTimestamp, long newTimestamp, E event) {...}
     @Override public void onEventRemoved(long timestamp, E event) {...}
     @Override public void onDurationChanged(long oldDuration, long newDuration) {...}
     @Override public void onTimelineCleared() {...}

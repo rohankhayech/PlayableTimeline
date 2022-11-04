@@ -87,6 +87,14 @@ public interface TimelineListener<E> {
     default void onEventModified(long timestamp, E event) {}
 
     /**
+     * Called when an event's timestamp has been shifted.
+     * @param oldTimestamp The previous timestamp the event was placed at.
+     * @param newTimestamp The current timestamp the event is placed at.
+     * @param event The event that was shifted.
+     */
+    default void onEventShifted(long oldTimestamp, long newTimestamp, E event) {}
+
+    /**
      * Called when the duration of the timeline was extended or shortened.
      * @param oldDuration The previous duration of the timeline.
      * @param newDuration The current duration of the timeline.

@@ -184,6 +184,7 @@ public class TimelineTest {
         assertTrue("No notification of timeline changed.",notifiedTLChanged);
         assertTrue("No notification of duration change.",notifiedDurationChanged);
         assertTrue("No notification of event inserted.",notifiedEventInserted);
+        // TODO: Test event shifted notification.
 
         // Check with negative interval.
         assertThrows("Delayed events by negative interval.", IllegalArgumentException.class, ()->tl.insertAndDelay(0, -1, e[0]));

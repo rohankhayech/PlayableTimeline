@@ -160,7 +160,10 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
         Iterator<TimelineFrame<E>> iter = iteratorAt(time);
         while (iter.hasNext()) {
             TimelineFrame<E> tf = iter.next();
-            tf.setTime(tf.getTime()+interval);
+            long oldTime = tf.getTime();
+            long newTime = oldTime+interval;
+            tf.setTime(newTime);
+            notifyEventShifted(oldTime, newTime, tf.getEvent());
         }
 
         // Notify listeners if duration extended.
@@ -495,6 +498,18 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
             l.onEventModified(timestamp, event);
         }
         notifyTimelineChanged();
+    }
+
+    /**
+     * Notifies all listeners that the specified event's timestamp was shifted.
+     * @param oldTimestamp The previous timestamp the event was placed at.
+     * @param newTimestamp The current timestamp the event is placed at.
+     * @param event The event that was shifted.
+     */
+    private void notifyEventShifted(long oldTimestamp, long newTimestamp, E event) {
+        for (TimelineListener<E> l : listeners) {
+            l.onEventShifted(oldTimestamp, newTimestamp, event);
+        }
     }
 
     @Override
