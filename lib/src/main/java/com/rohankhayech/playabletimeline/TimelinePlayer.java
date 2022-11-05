@@ -20,8 +20,6 @@
 
 package com.rohankhayech.playabletimeline;
 
-import org.apache.commons.collections4.iterators.PeekingIterator;
-
 import java.io.Closeable;
 import java.util.LinkedList;
 import java.util.List;
