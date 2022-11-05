@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -79,7 +80,7 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      * @param time The time at which the event should be triggered, in the timeline's specified units.
      * @param event The timeline event to be triggered when the specified time is reached.
      *
-     * @throws IllegalArgumentException If time is < 0.
+     * @throws IllegalArgumentException If time is less than 0.
      * @throws NullPointerException If the specified event is {@code null}.
      * @throws IllegalStateException If the modification operation is prevented by an object using the timeline.
      */
@@ -184,7 +185,7 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      * @param interval The time to delay all subsequent events, in the timeline's specified units.
      * @param event The timeline event to be triggered when the specified time is reached.
      *
-     * @throws IllegalArgumentException If time is < 0.
+     * @throws IllegalArgumentException If time is less than 0.
      * @throws NullPointerException If the specified event is {@code null}.
      * @throws IllegalStateException If the modification operation is prevented by an object using the timeline.
      */
@@ -225,7 +226,7 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      * @param interval The time to delay subsequent events if needed, in the timeline's specified units.
      * @param event The timeline event to be triggered when the specified time is reached.
      *
-     * @throws IllegalArgumentException If time is < 0.
+     * @throws IllegalArgumentException If time is less than 0.
      * @throws NullPointerException If the specified event is {@code null}.
      * @throws IllegalStateException If the modification operation is prevented by an object using the timeline.
      */
@@ -238,7 +239,15 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
     }
 
     /**
-     * @return An unmodifiable, chronological list of timeframes and their events on the timeline.
+     * Returns an unmodifiable, chronological list of all timeframes and their events on the timeline.
+     * 
+     * <p>
+     * Note that if the returned event is modified in any way the class should call
+     * {@link #notifyBeforeEventModified} before modification and {@link #notifyEventModified}
+     * after modification to ensure all listeners can respond to the change.
+     * </p>
+     * 
+     * @return An unmodifiable, chronological list of all timeframes and their events on the timeline.
      */
     public List<TimelineFrame<E>> toList() {
         return Collections.unmodifiableList(events);
@@ -248,11 +257,11 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      * Retrieves the first event placed at the specified timestamp.
      *
      * If multiple events are placed at the same timeframe this will return the event that was added
-     * to the timeline first. To retrieve all events at the specified timeframe call {@link Timeline#getAll}.
+     * to the timeline first. To retrieve all events at the specified timeframe call {@link #getAll}.
      *
      * <p>
      * Note that if the returned event is modified in any way the class should call
-     * {@link Timeline#notifyBeforeEventModified} before modification and {@link Timeline#notifyEventModified}
+     * {@link #notifyBeforeEventModified} before modification and {@link #notifyEventModified}
      * after modification to ensure all listeners can respond to the change.
      * </p>
      *
@@ -276,7 +285,7 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      *
      * <p>
      * Note that if the returned events are modified in any way the class should call
-     * {@link Timeline#notifyBeforeEventModified} before modification and {@link Timeline#notifyEventModified}
+     * {@link #notifyBeforeEventModified} before modification and {@link #notifyEventModified}
      * after modification to ensure all listeners can respond to the change.
      * </p>
      *
@@ -337,7 +346,7 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
 
     /**
      * @return The duration of the timeline, specified by the time of the last event.
-     * Units can be retrieved using {@code getUnit()}.
+     * Units can be retrieved using {@link #getUnit()}.
      */
     public long getDuration() {
         if (events.size() > 0) {
@@ -358,6 +367,15 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
     }
 
     /**
+     * An iterator over the timeline's events and their timestamps.
+     *
+     * <p>
+     * Note that if the events contained in the returned stream are modified in any way the class should call
+     * {@link #notifyBeforeEventModified} before modification and
+     * {@link #notifyEventModified}
+     * after modification to ensure all listeners can respond to the change.
+     * </p>
+     *
      * @return An iterator over the timeline's events.
      */
     public Iterator<TimelineFrame<E>> iterator() {
@@ -367,7 +385,7 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
     /**
      * Removes all events from this timeline. The timeline will be empty after this method returns.
      *
-     * @implNote This method will notify listeners that the timeline has been cleared and changed,
+     * This method will notify listeners that the timeline has been cleared and changed,
      * but will not notify listeners of each individual event's removal.
      */
     public void clear() {
@@ -386,6 +404,14 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
 
     /**
      * Returns a timeline iterator starting at the next event after the specified time.
+     *
+     * <p>
+     Note that if the events contained in the returned stream are modified in any way the class should call
+     * {@link #notifyBeforeEventModified} before modification and
+     * {@link #notifyEventModified}
+     * after modification to ensure all listeners can respond to the change.
+     * </p>
+     *
      * @param time The time position (in units specified by the timeline).
      * @return An iterator starting at the next event after the specified time.
      */
@@ -556,6 +582,14 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
 
     /**
      * Returns a sequential Stream with this timeline as its source.
+     * 
+     * <p>
+     * Note that if the events contained in the returned stream are modified in any way the class should call
+     * {@link #notifyBeforeEventModified} before modification and
+     * {@link #notifyEventModified}
+     * after modification to ensure all listeners can respond to the change.
+     * </p>
+     * 
      * @return A sequential Stream over the events in this timeline.
      */
     public Stream<TimelineFrame<E>> stream() {
