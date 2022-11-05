@@ -149,7 +149,7 @@ public class TimelineTest {
 
         // Test remove event.
         tl.removeEvent(e[0]);
-        assertFalse("Event not removed.", tl.existsAt(0));
+        assertFalse("Event not removed.", tl.contains(e[0]));
 
         // Check listener notifications.
         assertTrue("No notification before timeline changed.",notifiedBeforeTLChanged);
@@ -163,6 +163,51 @@ public class TimelineTest {
 
         // Check remove null fails without removing or exception.
         tl.removeEvent(null);
+        assertTrue("Removing null removed actual event.", tl.existsAt(EVENT_DELAY));
+    }
+
+    @Test
+    public void testRemoveAt() {
+        addDefaultEvents();
+        // Test remove event.
+        tl.removeEvent(0);
+        assertFalse("Event not removed.", tl.existsAt(0));
+
+        // Check listener notifications.
+        assertTrue("No notification before timeline changed.",notifiedBeforeTLChanged);
+        assertTrue("No notification of timeline changed.",notifiedTLChanged);
+        assertTrue("No notification of event removal.",notifiedEventRemoved);
+        assertFalse("False notification of duration change.",notifiedDurationChanged);
+
+        // Check duration change notification.
+        tl.removeEvent(EVENT_DELAY*2);
+        assertTrue("No notification of duration change.",notifiedDurationChanged);
+
+        // Check remove at invalid fails without removing or exception.
+        tl.removeEvent(-1);
+        assertTrue("Removing null removed actual event.", tl.existsAt(EVENT_DELAY));
+    }
+
+    @Test
+    public void testRemoveAll() {
+        addDefaultEvents();
+        tl.addEvent(0,()->{});
+        // Test remove event.
+        tl.removeAll(0);
+        assertFalse("All events not removed.", tl.existsAt(0));
+
+        // Check listener notifications.
+        assertTrue("No notification before timeline changed.",notifiedBeforeTLChanged);
+        assertTrue("No notification of timeline changed.",notifiedTLChanged);
+        assertTrue("No notification of event removal.",notifiedEventRemoved);
+        assertFalse("False notification of duration change.",notifiedDurationChanged);
+
+        // Check duration change notification.
+        tl.removeAll(EVENT_DELAY*2);
+        assertTrue("No notification of duration change.",notifiedDurationChanged);
+
+        // Check remove at invalid fails without removing or exception.
+        tl.removeAll(-1);
         assertTrue("Removing null removed actual event.", tl.existsAt(EVENT_DELAY));
     }
 

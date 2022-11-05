@@ -114,24 +114,66 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      */
     public void removeEvent(E event) {
         if (event == null) return;
+        removeIf(tf->tf.getEvent()==event, false);
+    }
 
+    /**
+     * Removes the first event at the specified timeframe, if present.
+     * @param timestamp The timestamp at which to remove the event.
+     * 
+     * @throws IllegalStateException If the modification operation is prevented by an object using the timeline.
+     */
+    public void removeEvent(long timestamp) {
+        if (timestamp < 0 || timestamp > getDuration()) return;
+        removeIf(tf->tf.getTime()==timestamp, false);
+    }
+
+    /**
+     * Removes all of the events placed at the specified timeframe, if present.
+     * @param timestamp The timestamp at which to remove the events.
+     * 
+     * @throws IllegalStateException If the modification operation is prevented by an object using the timeline.
+     */
+    public void removeAll(long timestamp) {
+        if (timestamp < 0 || timestamp > getDuration()) return;
+        removeIf(tf -> tf.getTime() == timestamp, true);
+    }
+
+    /**
+     * Removes the first (or all if {@code removeAll} is true) event meeting the given condition. 
+     * @param condition A predicate that determines whether the given event should be removed.
+     * @param removeAll Whether to remove all events meeting the criteria or only the first.
+     * 
+     * @throws IllegalStateException If the modification operation is prevented by an object using the timeline.
+     */
+    private void removeIf(Predicate<TimelineFrame<E>> condition, boolean removeAll) {
         notifyBeforeTimelineChanged();
 
         // Keep track of the old duration.
         long oldDuration = getDuration();
 
-        for (TimelineFrame<E> tf : events) {
-            if (tf.getEvent() == event) {
-                events.remove(tf);
+        boolean removed = false;
+
+        Iterator<TimelineFrame<E>> iter = events.iterator();
+        while (iter.hasNext()) {
+            TimelineFrame<E> tf = iter.next();
+            if (condition.test(tf)) {
+
+                iter.remove();
 
                 // Notify listeners the event was removed.
                 notifyEventRemoved(tf.getTime());
+                
+                removed = true;
 
-                // Notify listeners if duration extended.
-                if (getDuration() < oldDuration) {
-                    notifyDurationChanged(oldDuration);
-                }
-                break;
+                if (!removeAll) break;
+            }
+        }
+
+        if (removed) {
+            // Notify listeners if duration extended.
+            if(getDuration() < oldDuration) {
+                notifyDurationChanged(oldDuration);
             }
         }
     }
