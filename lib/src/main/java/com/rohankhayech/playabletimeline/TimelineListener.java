@@ -47,6 +47,7 @@ public interface TimelineListener<E> {
     /**
      * Called when an event has been added to the timeline.
      * @param timestamp The timestamp at which the event was added.
+     * @param event The event that was added to the timeline.
      */
     default void onEventAdded(long timestamp, E event) {}
 
@@ -60,6 +61,7 @@ public interface TimelineListener<E> {
     /**
      * Called when an event has been removed from the timeline.
      * @param timestamp The timestamp at which the event was removed.
+     * @param event The event that was removed from the timeline.
      */
     default void onEventRemoved(long timestamp, E event) {}
 
@@ -72,6 +74,7 @@ public interface TimelineListener<E> {
      * called if an external class modifies an event.
      *
      * @param timestamp The timestamp at which the event was modified.
+     * @param event The event to be modified.
      * @throws IllegalStateException If the listener needs to prevent the modification operation,
      * eg. during playback or iteration.
      */
@@ -83,6 +86,7 @@ public interface TimelineListener<E> {
      * called if an external class modifies an event.
      *
      * @param timestamp The timestamp at which the event was modified.
+     * @param event The event that was modified.
      */
     default void onEventModified(long timestamp, E event) {}
 
