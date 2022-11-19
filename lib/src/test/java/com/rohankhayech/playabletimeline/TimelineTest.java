@@ -32,8 +32,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -215,6 +217,16 @@ public class TimelineTest {
     public void testInsertAndDelay() {
         addDefaultEvents();
 
+        // Setup event shifted listener.
+        Map<TimelineEvent, Boolean> notifiedShifted = new HashMap<>(3);
+
+        TimelineListener<TimelineEvent> l2 = tl.addListener(new TimelineListener<>() {
+            @Override
+            public void onEventShifted(long oldT, long newT, TimelineEvent ev) {
+                notifiedShifted.put(ev, true);
+            }
+        });
+
         // Test insert event at unique timeframe.
         tl.insertAndDelay(EVENT_DELAY/2, EVENT_DELAY, halfEvent);
         assertEquals("Event not added at specified time.", halfEvent ,tl.get(EVENT_DELAY/2));
@@ -229,7 +241,11 @@ public class TimelineTest {
         assertTrue("No notification of timeline changed.",notifiedTLChanged);
         assertTrue("No notification of duration change.",notifiedDurationChanged);
         assertTrue("No notification of event inserted.",notifiedEventInserted);
-        // TODO: Test event shifted notification.
+        assertNull("False notification of event shifted.", notifiedShifted.get(e[0]));
+        assertTrue("No notification of event shifted.", notifiedShifted.get(e[1]));
+        assertTrue("No notification of event shifted.", notifiedShifted.get(e[2]));
+
+        tl.removeListener(l2);
 
         // Check with negative interval.
         assertThrows("Delayed events by negative interval.", IllegalArgumentException.class, ()->tl.insertAndDelay(0, -1, e[0]));

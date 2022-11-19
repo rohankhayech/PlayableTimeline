@@ -536,7 +536,7 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      * Notifies all listeners that the timeline was cleared.
      */
     private void notifyTimelineCleared() {
-        for (TimelineListener l : listeners) {
+        for (TimelineListener<E> l : listeners) {
             l.onTimelineCleared();
         }
         notifyTimelineChanged();
