@@ -93,7 +93,7 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
         // Keep track of the old duration.
         long oldDuration = getDuration();
 
-        //Create a timeframe with the event.
+        // Create a timeframe with the event.
         TimelineFrame<E> timeframe = new TimelineFrame<>(time, event);
         events.add(timeframe);
         Collections.sort(events);
@@ -293,7 +293,7 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      * @return A list of events placed at the specified timestamp.
      */
     public List<E> getAll(long timestamp) {
-        return events.stream()
+        return stream()
             .filter(tf -> tf.getTime() == timestamp)
             .map(TimelineFrame::getEvent)
             .collect(Collectors.toList());
@@ -306,7 +306,7 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      * @return {@code true} if an event exists at the given timestamp, {@code false} otherwise.
      */
     public boolean existsAt(long timestamp) {
-        return events.stream().anyMatch(tf -> tf.getTime()==timestamp);
+        return stream().anyMatch(tf -> tf.getTime()==timestamp);
     }
 
     /**
@@ -315,7 +315,7 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      * @return {@code true} if the timeline contains the given event, {@code false} otherwise.
      */
     public boolean contains(E event) {
-        return event != null && events.stream().anyMatch(tf -> tf.getEvent().equals(event));
+        return event != null && stream().anyMatch(tf -> tf.getEvent().equals(event));
     }
 
     /**
