@@ -183,6 +183,8 @@ timeline.addListener(new TimelineListener<E>() {
     @Override public void onTimelineChanged() {...}
     @Override public void onEventAdded(long t, E event) {...}
     @Override public void onEventInserted(long timestamp, long interval) {...}
+    @Override public void beforeEventModified(long timestamp, E event) {...}
+    @Override public void onEventModified(long timestamp, E event) {...}
     @Override public void onEventShifted(long oldTimestamp, long newTimestamp, E event) {...}
     @Override public void onEventRemoved(long timestamp, E event) {...}
     @Override public void onDurationChanged(long oldDuration, long newDuration) {...}
@@ -203,6 +205,7 @@ player.addListener(new TLPlaybackListener() {
 });
 ```
 
+Listeners only need to implement the callbacks that are required for the use case. The default implementation of these listeners is to ignore the callback.
 
 ### Contextual Events and Playback
 Certain events may require a reference to a context object, such as an audio device or platform application context, in order to execute their triggered action. Rather than storing this reference with each event, this library provides a `ContextualTimelinePlayer` object, which injects the required context object to each event as they are triggered. 
