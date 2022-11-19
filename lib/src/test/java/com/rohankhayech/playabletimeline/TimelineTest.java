@@ -409,7 +409,7 @@ public class TimelineTest {
 
     @Test
     public void testCreateNewEvent() {
-        assertThrows(UnsupportedOperationException.class, ()->tl.createNewEvent());
+        assertThrows(UnsupportedOperationException.class, ()->{TimelineEvent ev = tl.createNewEvent();});
     }
 
     @Test
