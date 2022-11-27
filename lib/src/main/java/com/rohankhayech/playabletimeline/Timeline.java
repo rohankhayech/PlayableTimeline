@@ -443,6 +443,24 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
         throw new UnsupportedOperationException("createNewEvent() is not implemented on this Timeline class.");
     }
 
+
+    /**
+     * Scales the timestamp of each event by the specified factor.
+     * Note that scaling by a non-integer factor may produce rounded results.
+     * @param factor The factor to scale the timeline by.
+     */
+    protected void scale(double factor) {
+        if (factor <= 0) throw new IllegalArgumentException("Ratio must be <= 0");
+        if (factor == 1) return;
+
+        for (TimelineFrame<E> tf : events) {
+            long oldTime = tf.getTime();
+            long newTime = Math.round(oldTime*factor);
+            tf.setTime(newTime);
+            notifyEventShifted(oldTime, newTime, tf.getEvent());
+        }
+    }
+
     // Listener Notification
 
     /**

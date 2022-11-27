@@ -530,6 +530,48 @@ public class TimelineTest {
         assertTrue("Stream contains extra events.", tlEvents.containsAll(streamEvents));
     }
 
+    @Test
+    public void testScale() {
+        // Test scale up
+        addDefaultEvents();
+        tl.scale(2);
+        System.out.println(tl);
+        assertEquals("Event timestamp scaled incorrectly.", 0, tl.timeOf(e[0]));
+        assertEquals("Event timestamp scaled incorrectly.", 2*(EVENT_DELAY), tl.timeOf(e[1]));
+        assertEquals("Event timestamp scaled incorrectly.", 2*(EVENT_DELAY*2), tl.timeOf(e[2]));
+        tl.clear();
+
+        // Test rounded up
+        addDefaultEvents();
+        tl.scale(1.75);
+        System.out.println(tl);
+        assertEquals("Event timestamp scaled incorrectly.", 0, tl.timeOf(e[0]));
+        assertEquals("Event timestamp scaled incorrectly.", Math.round((EVENT_DELAY)*1.75), tl.timeOf(e[1]));
+        assertEquals("Event timestamp scaled incorrectly.", Math.round((EVENT_DELAY*2)*1.75), tl.timeOf(e[2]));
+        tl.clear();
+
+        // Test scale down
+        addDefaultEvents();
+        tl.scale(0.5);
+        System.out.println(tl);
+        assertEquals("Event timestamp scaled incorrectly.", 0, tl.timeOf(e[0]));
+        assertEquals("Event timestamp scaled incorrectly.", (EVENT_DELAY)/2, tl.timeOf(e[1]));
+        assertEquals("Event timestamp scaled incorrectly.", (EVENT_DELAY*2)/2, tl.timeOf(e[2]));
+        tl.clear();
+
+        // Test rounded down
+        addDefaultEvents();
+        tl.scale(0.25);
+        System.out.println(tl);
+        assertEquals("Event timestamp scaled incorrectly.", 0, tl.timeOf(e[0]));
+        assertEquals("Event timestamp scaled incorrectly.", Math.round((EVENT_DELAY)*0.25), tl.timeOf(e[1]));
+        assertEquals("Event timestamp scaled incorrectly.", Math.round((EVENT_DELAY*2)*0.25), tl.timeOf(e[2]));
+        tl.clear();
+
+        // Test invalid
+        assertThrows(IllegalArgumentException.class, ()->tl.scale(0));
+    }
+
     // Helper Methods
 
     /**
