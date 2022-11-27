@@ -518,6 +518,20 @@ public class TimelineTest {
         assertEquals("Returned incorrect number of events.", tl.toList().size(), tl.count());
     }
 
+    @Test 
+    public void countAt() {
+        // Check when tl empty.
+        assertEquals("Returns > 0 when empty.", 0, tl.countAt(0));
+
+        // Check non-existent timestamp.
+        addDefaultEvents();
+        assertEquals("Returns > 0 when timestamp is not present.", 0, tl.countAt(1));
+
+        // Check correct count.
+        tl.addEvent(2, dupeEvent);
+        assertEquals("Returned list has incorrect num of events.", 2, tl.countAt(2));
+    }
+
     @Test
     public void testStream() {
         addDefaultEvents();

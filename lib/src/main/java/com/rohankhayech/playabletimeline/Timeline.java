@@ -358,10 +358,21 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
     }
 
     /**
-     * @return The number of events in this timeline.
+     * @return The number of events on this timeline.
      */
     public int count() {
         return events.size();
+    }
+
+    /**
+     * Returns the number of events at the specified timestamp on this timeline.
+     * @param timestamp The timestamp to count events at.
+     * @return The number of events at the specified timestamp on this timeline.
+     */
+    public long countAt(long timestamp) {
+        return stream()
+            .filter(tf -> tf.getTime() == timestamp)
+            .count();
     }
 
     /** @return {@code true} if the this timeline contains no events. */
