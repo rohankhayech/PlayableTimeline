@@ -54,6 +54,10 @@ public class TimelineTest {
     private boolean notifiedBeforeTLChanged, notifiedTLChanged, notifiedEventAdded, notifiedEventInserted,
         notifiedEventRemoved, notifiedDurationChanged, notifiedTLCleared;
 
+
+    /** Event shifted callback checks. */
+    Map<TimelineEvent, Boolean> notifiedShifted;
+
     /** Array of test events. */
     private TimelineEvent[] e;
 
@@ -93,6 +97,7 @@ public class TimelineTest {
             @Override public void onEventRemoved(long t, TimelineEvent e) { notifiedEventRemoved = true; }
             @Override public void onDurationChanged(long od, long nd) { notifiedDurationChanged = true; }
             @Override public void onTimelineCleared() { notifiedTLCleared = true; }
+            @Override public void onEventShifted(long oldT, long newT, TimelineEvent ev) { notifiedShifted.put(ev, true); }
         });
     }
 
@@ -217,16 +222,6 @@ public class TimelineTest {
     public void testInsertAndDelay() {
         addDefaultEvents();
 
-        // Setup event shifted listener.
-        Map<TimelineEvent, Boolean> notifiedShifted = new HashMap<>(3);
-
-        TimelineListener<TimelineEvent> l2 = tl.addListener(new TimelineListener<>() {
-            @Override
-            public void onEventShifted(long oldT, long newT, TimelineEvent ev) {
-                notifiedShifted.put(ev, true);
-            }
-        });
-
         // Test insert event at unique timeframe.
         tl.insertAndDelay(EVENT_DELAY/2, EVENT_DELAY, halfEvent);
         assertEquals("Event not added at specified time.", halfEvent ,tl.get(EVENT_DELAY/2));
@@ -244,8 +239,6 @@ public class TimelineTest {
         assertNull("False notification of event shifted.", notifiedShifted.get(e[0]));
         assertTrue("No notification of event shifted.", notifiedShifted.get(e[1]));
         assertTrue("No notification of event shifted.", notifiedShifted.get(e[2]));
-
-        tl.removeListener(l2);
 
         // Check with negative interval.
         assertThrows("Delayed events by negative interval.", IllegalArgumentException.class, ()->tl.insertAndDelay(0, -1, e[0]));
@@ -544,6 +537,29 @@ public class TimelineTest {
         assertTrue("Stream contains extra events.", tlEvents.containsAll(streamEvents));
     }
 
+    @Test
+    public void testShift() {
+        addDefaultEvents();
+
+        // Test shifting.
+        TimelineFrame<TimelineEvent> tf = tl.toList().get(2);
+        tl.shift(tf, 0);
+        assertEquals("Event not shifted", 0, tl.timeOf(tf.getEvent()));
+        assertEquals("Timeline not sorted after shift.", tf, tl.toList().get(1));
+
+        // Check listener notifications.
+        assertTrue("No notification before timeline changed.",notifiedBeforeTLChanged);
+        assertTrue("No notification of timeline changed.",notifiedTLChanged);
+        assertTrue("No notification of duration change.",notifiedDurationChanged);
+        assertTrue("No notification of event shifted.", notifiedShifted.get(e[2]));
+
+        // Test invalid
+        TimelineFrame<TimelineEvent> other_tf = new TimelineFrame<>(0,()->{});
+        assertThrows("Did not throw exception when timeframe that is not part of tl.", NoSuchElementException.class, ()->tl.shift(other_tf, 10));
+        assertEquals("Shifted timeframe that is not part of tl.", 0, tf.getTime());
+        assertThrows("Did not throw exception when time is less than 0.", NoSuchElementException.class, ()->tl.shift(other_tf, -1));
+    }
+
     // Helper Methods
 
     /**
@@ -557,5 +573,6 @@ public class TimelineTest {
         notifiedEventRemoved = false;
         notifiedDurationChanged = false;
         notifiedTLCleared = false;
+        notifiedShifted = new HashMap<>(3);
     }
 }

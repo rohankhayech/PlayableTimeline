@@ -26,6 +26,7 @@ import java.util.NavigableMap;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.NoSuchElementException;
 
 /**
  * The Timeline Map class represents a playable timeline of events where events are placed at a specific timeframe along the timeline.
@@ -137,4 +138,20 @@ public class TimelineMap<E extends TimelineEvent> extends Timeline<E> {
             TreeMap::new // Map supplier - tree map to ensure ordered.
         ));
     }
+
+    /**
+     * Shifts the specified timeframe to the specified timestamp.
+     *
+     * @param timeframe The timeframe on this timeline to shift.
+     * @param time The timestamp to shift the timeframe to.
+     * @throws NoSuchElementException If the timeframe is not part of this timeline.
+     * @throws IllegalArgumentException If the specified time is less than 0 or an event already exists at the specified timestamp.
+     * @throws IllegalStateException If the modification operation is prevented by an object using the timeline.
+     */
+    @Override
+    public void shift(TimelineFrame<E> timeframe, long time) {
+        if (existsAt(time)) throw new IllegalArgumentException("An event already exists at the specified timestamp, cannot shift.");
+        super.shift(timeframe, time);
+    }
+
 }
