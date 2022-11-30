@@ -119,6 +119,8 @@ public class TimelineMapTest {
 
         // Test invalid
         assertThrows(IllegalArgumentException.class, () -> tl.scale(0));
+        assertThrows(IllegalArgumentException.class, () -> tl.scale(0, (e1,e2)->e1));
+        assertThrows(NullPointerException.class, () -> tl.scale(1, null));
     }
 
     @Test

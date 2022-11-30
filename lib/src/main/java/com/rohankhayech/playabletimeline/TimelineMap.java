@@ -165,13 +165,15 @@ public class TimelineMap<E extends TimelineEvent> extends Timeline<E> {
      * <p>
      * Note that scaling by a non-integer factor may produce rounded results.
      * </p><p>
-     * Scaling down (with a factor of < 1) may cause a conflict between the resulting timestamps of
+     * Scaling down (with a factor of less than 1) may cause a conflict between the resulting timestamps of
      * multiple events. In this case, all but one event at each timestamp will be permanently removed.
      * To avoid lossy scaling, see {@link TimelineMap#scale(double, BinaryOperator)}, which allows the
      * caller to specify a merge function to resolve conflicts instead.
      * </p>
      * 
      * @param factor The factor to scale the timeline by.
+     * @throws IllegalArgumentException If the specified factor is less than or equal to 0.
+     * @throws IllegalStateException If the modification operation is prevented by an object using the timeline.
      */
     @Override
     protected void scale(double factor) {
@@ -184,7 +186,7 @@ public class TimelineMap<E extends TimelineEvent> extends Timeline<E> {
      * <p>
      * Note that scaling by a non-integer factor may produce rounded results.
      * </p><p>
-     * Scaling down (with a factor of < 1) may cause a conflict between the resulting timestamps of
+     * Scaling down (with a factor of less than 1) may cause a conflict between the resulting timestamps of
      * multiple events. In this case, the specified merge function will be used to determine the
      * event placed at that timestamp.
      * </p>
@@ -192,8 +194,13 @@ public class TimelineMap<E extends TimelineEvent> extends Timeline<E> {
      * @param factor The factor to scale the timeline by.
      * @param mergeFunction A function that returns the event to place at a timestamp if there is a conflict.
      *                      This function takes two events and returns a single event.
+     * @throws IllegalArgumentException If the specified factor is less than or equal to 0.
+     * @throws IllegalStateException If the modification operation is prevented by an object using the timeline.
+     * @throws NullPointerException If the merge function is null.
      */
     protected void scale(double factor, BinaryOperator<E> mergeFunction) {
+        Objects.requireNonNull(mergeFunction);
+
         // Scale the timeline.
         super.scale(factor);
 
