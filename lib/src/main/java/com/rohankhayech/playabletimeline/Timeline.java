@@ -401,6 +401,8 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      *
      * This method will notify listeners that the timeline has been cleared and changed,
      * but will not notify listeners of each individual event's removal.
+     *
+     * @throws IllegalStateException If the modification operation is prevented by an object using the timeline.
      */
     public void clear() {
         if (!isEmpty()) {
@@ -454,6 +456,39 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
         throw new UnsupportedOperationException("createNewEvent() is not implemented on this Timeline class.");
     }
 
+    /**
+     * Shifts the specified timeframe to the specified timestamp.
+     *
+     * @param timeframe The timeframe on this timeline to shift.
+     * @param time The timestamp to shift the timeframe to.
+     * @throws NoSuchElementException If the timeframe is not part of this timeline.
+     * @throws IllegalArgumentException If the specified time is less than 0.
+     * @throws IllegalStateException If the modification operation is prevented by an object using the timeline.
+     */
+    public void shift(TimelineFrame<E> timeframe, long time) {
+        // Check the specified frame is owned by this timeline and that time is valid.
+        if (stream().noneMatch(tf->tf==timeframe)) throw new NoSuchElementException("Specified timeframe is not owned by this timeline.");
+        if (time < 0) throw new IllegalArgumentException("Cannot shift timeframe to a negative timestamp.");
+
+        // Notify before.
+        notifyBeforeTimelineChanged();
+        long oldTime = timeframe.getTime();
+        long oldDuration = getDuration();
+
+        // Shift the
+        timeframe.setTime(time);
+
+        // Sort the timeline.
+        Collections.sort(events);
+
+        // Notify after.
+        notifyEventShifted(oldTime, time, timeframe.getEvent());
+        if (oldDuration != getDuration()) {
+            notifyDurationChanged(oldDuration); // also notifies tl changed.
+        } else {
+            notifyTimelineChanged();
+        }
+    }
 
     /**
      * Scales the timestamp of each event by the specified factor.

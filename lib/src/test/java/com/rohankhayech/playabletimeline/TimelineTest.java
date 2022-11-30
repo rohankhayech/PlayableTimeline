@@ -581,6 +581,29 @@ public class TimelineTest {
         assertThrows(IllegalArgumentException.class, ()->tl.scale(0));
     }
 
+    @Test
+    public void testShift() {
+        addDefaultEvents();
+
+        // Test shifting.
+        TimelineFrame<TimelineEvent> tf = tl.toList().get(2);
+        tl.shift(tf, 0);
+        assertEquals("Event not shifted", 0, tl.timeOf(tf.getEvent()));
+        assertEquals("Timeline not sorted after shift.", tf, tl.toList().get(1));
+
+        // Check listener notifications.
+        assertTrue("No notification before timeline changed.",notifiedBeforeTLChanged);
+        assertTrue("No notification of timeline changed.",notifiedTLChanged);
+        assertTrue("No notification of duration change.",notifiedDurationChanged);
+        assertTrue("No notification of event shifted.", notifiedShifted.get(e[2]));
+
+        // Test invalid
+        TimelineFrame<TimelineEvent> other_tf = new TimelineFrame<>(0,()->{});
+        assertThrows("Did not throw exception when timeframe that is not part of tl.", NoSuchElementException.class, ()->tl.shift(other_tf, 10));
+        assertEquals("Shifted timeframe that is not part of tl.", 0, tf.getTime());
+        assertThrows("Did not throw exception when time is less than 0.", NoSuchElementException.class, ()->tl.shift(other_tf, -1));
+    }
+
     // Helper Methods
 
     /**
