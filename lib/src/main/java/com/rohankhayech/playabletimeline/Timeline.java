@@ -518,7 +518,7 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      * @throws IllegalStateException If a listener needs to prevent the modification operation,
      * eg. during playback or iteration.
      */
-    private void notifyBeforeTimelineChanged() throws IllegalStateException {
+    protected void notifyBeforeTimelineChanged() throws IllegalStateException {
         for (TimelineListener<E> l : listeners) {
             l.beforeTimelineChanged();
         }
