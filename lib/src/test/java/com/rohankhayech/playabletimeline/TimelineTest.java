@@ -54,9 +54,8 @@ public class TimelineTest {
     private boolean notifiedBeforeTLChanged, notifiedTLChanged, notifiedEventAdded, notifiedEventInserted,
         notifiedEventRemoved, notifiedDurationChanged, notifiedTLCleared;
 
-
-    /** Event shifted callback checks. */
-    Map<TimelineEvent, Boolean> notifiedShifted;
+    /** Event shifted callback checks */
+    private Map<TimelineEvent, Boolean> notifiedShifted;
 
     /** Array of test events. */
     private TimelineEvent[] e;
@@ -535,6 +534,51 @@ public class TimelineTest {
         // Check stream equals stream from underlying list.
         assertTrue("Stream does not contain all tl events.", streamEvents.containsAll(tlEvents));
         assertTrue("Stream contains extra events.", tlEvents.containsAll(streamEvents));
+    }
+
+    @Test
+    public void testScale() {
+        // Test scale up
+        addDefaultEvents();
+        tl.scale(2);
+        assertEquals("Event timestamp scaled incorrectly.", 0, tl.timeOf(e[0]));
+        assertEquals("Event timestamp scaled incorrectly.", 2*(EVENT_DELAY), tl.timeOf(e[1]));
+        assertEquals("Event timestamp scaled incorrectly.", 2*(EVENT_DELAY*2), tl.timeOf(e[2]));
+        tl.clear();
+
+        // Check listener notifications.
+        assertTrue("No notification before timeline changed.",notifiedBeforeTLChanged);
+        assertTrue("No notification of timeline changed.",notifiedTLChanged);
+        assertTrue("No notification of duration change.",notifiedDurationChanged);
+        assertTrue("No notification of event shifted.", notifiedShifted.get(e[0]));
+        assertTrue("No notification of event shifted.", notifiedShifted.get(e[1]));
+        assertTrue("No notification of event shifted.", notifiedShifted.get(e[2]));
+
+        // Test rounded up
+        addDefaultEvents();
+        tl.scale(1.75);
+        assertEquals("Event timestamp scaled incorrectly.", 0, tl.timeOf(e[0]));
+        assertEquals("Event timestamp scaled incorrectly.", Math.round((EVENT_DELAY)*1.75), tl.timeOf(e[1]));
+        assertEquals("Event timestamp scaled incorrectly.", Math.round((EVENT_DELAY*2)*1.75), tl.timeOf(e[2]));
+        tl.clear();
+
+        // Test scale down
+        addDefaultEvents();
+        tl.scale(0.5);
+        assertEquals("Event timestamp scaled incorrectly.", 0, tl.timeOf(e[0]));
+        assertEquals("Event timestamp scaled incorrectly.", (EVENT_DELAY)/2, tl.timeOf(e[1]));
+        assertEquals("Event timestamp scaled incorrectly.", (EVENT_DELAY*2)/2, tl.timeOf(e[2]));
+        tl.clear();
+
+        // Test rounded down
+        addDefaultEvents();
+        tl.scale(0.25);
+        assertEquals("Event timestamp scaled incorrectly.", 0, tl.timeOf(e[0]));
+        assertEquals("Event timestamp scaled incorrectly.", Math.round((EVENT_DELAY)*0.25), tl.timeOf(e[1]));
+        assertEquals("Event timestamp scaled incorrectly.", Math.round((EVENT_DELAY*2)*0.25), tl.timeOf(e[2]));
+
+        // Test invalid
+        assertThrows(IllegalArgumentException.class, ()->tl.scale(0));
     }
 
     @Test

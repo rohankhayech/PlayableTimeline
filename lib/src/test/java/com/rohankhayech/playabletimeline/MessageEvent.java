@@ -40,6 +40,10 @@ public class MessageEvent implements TimelineEvent {
         System.out.println(msg);
     }
 
+    public String getMsg() {
+        return msg;
+    }
+
     @Override
     public String toString() {
         return "Print \"" + msg + "\"";

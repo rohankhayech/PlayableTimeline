@@ -42,9 +42,33 @@ public class TimelineMapTest {
     /** Test TimelineMap object. */
     TimelineMap<TimelineEvent> tl;
 
+    /** Array of test events. */
+    private TimelineEvent[] e;
+
+    /** Delay between test events. */
+    private static final long EVENT_DELAY = 2;
+
+    /** Number of default test events. */
+    private static final int NUM_EVENTS = 3;
+
     @Before
     public void setUp() {
         tl = new TimelineMap<>(TimeUnit.SECONDS);
+
+        // Setup default events
+        e = new MessageEvent[NUM_EVENTS];
+        for (int i = 0; i < e.length; i++) {
+            e[i] = new MessageEvent("Event " + i + " ");
+        }
+    }
+
+    /**
+     * Adds the default set of events to the timeline.
+     */
+    private void addDefaultEvents() {
+        tl.addEvent(0, e[0]);
+        tl.addEvent(EVENT_DELAY, e[1]);
+        tl.addEvent(EVENT_DELAY*2, e[2]);
     }
 
     @Test
@@ -75,6 +99,28 @@ public class TimelineMapTest {
         // Check removed
         tl.removeAll(1);
         assertFalse("Event not removed.", tl.existsAt(1));
+    }
+
+    @Test
+    public void testScale() {
+        // Test rounded down
+        addDefaultEvents();
+        tl.scale(0.1);
+        assertEquals("Event timestamp scaled incorrectly.", 0, tl.timeOf(e[0]));
+        assertFalse("Duplicate event not removed.", tl.contains(e[1]));
+        assertFalse("Duplicate event not removed.", tl.contains(e[2]));
+        tl.clear();
+
+        // Test merging
+        addDefaultEvents();
+        tl.scale(.1, (e1,e2)-> new MessageEvent(((MessageEvent)e1).getMsg()+((MessageEvent)e2).getMsg()));
+        assertEquals("Duplicate events not removed.", 1, tl.countAt(0));
+        assertEquals("Event merged incorrectly.", "Event 0 Event 1 Event 2 ", ((MessageEvent)tl.get(0)).getMsg());
+
+        // Test invalid
+        assertThrows(IllegalArgumentException.class, () -> tl.scale(0));
+        assertThrows(IllegalArgumentException.class, () -> tl.scale(0, (e1,e2)->e1));
+        assertThrows(NullPointerException.class, () -> tl.scale(1, null));
     }
 
     @Test

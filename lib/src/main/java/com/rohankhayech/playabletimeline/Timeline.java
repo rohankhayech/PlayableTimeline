@@ -489,6 +489,35 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
             notifyTimelineChanged();
         }
     }
+
+    /**
+     * Scales the timestamp of each event by the specified factor.
+     * Note that scaling by a non-integer factor may produce rounded results.
+     * @param factor The factor to scale the timeline by.
+     * @throws IllegalArgumentException If the specified factor is less than or equal to 0.
+     * @throws IllegalStateException If the modification operation is prevented by an object using the timeline.
+     */
+    protected void scale(double factor) {
+        if (factor <= 0) throw new IllegalArgumentException("Factor must be > 0");
+        if (factor == 1) return;
+
+        notifyBeforeTimelineChanged();
+        long oldDuration = getDuration();
+
+        for (TimelineFrame<E> tf : events) {
+            long oldTime = tf.getTime();
+            long newTime = Math.round(oldTime*factor);
+            tf.setTime(newTime);
+            notifyEventShifted(oldTime, newTime, tf.getEvent());
+        }
+
+        if (oldDuration != getDuration()) {
+            notifyDurationChanged(oldDuration); // also notifies tl changed.
+        } else {
+            notifyTimelineChanged();
+        }
+    }
+
     // Listener Notification
 
     /**
