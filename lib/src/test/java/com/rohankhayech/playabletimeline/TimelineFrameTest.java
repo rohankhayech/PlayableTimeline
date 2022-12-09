@@ -65,7 +65,17 @@ public class TimelineFrameTest {
     public void testSetTime() {
         frame.setTime(1);
         assertEquals("Time not set to specified value.", 1, frame.getTime());
+        assertThrows("Set time to negative value.", IllegalArgumentException.class, ()->frame.setTime(-1));
     }
+
+    @Test
+    public void testSetEvent() {
+        TimelineEvent e = ()->{};
+        frame.setEvent(e);
+        assertSame("Time not set to specified value.", e, frame.getEvent());
+        assertThrows("Set event to null.",  NullPointerException.class, () -> frame.setEvent(null));
+    }
+
 
     @Test
     public void testTrigger() {

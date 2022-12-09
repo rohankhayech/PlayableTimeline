@@ -30,7 +30,7 @@ import java.util.Objects;
 public final class TimelineFrame<E extends TimelineEvent> implements Comparable<TimelineFrame<? extends TimelineEvent>> {
 
     /** The timeline event to be triggered. */
-    private final E event;
+    private E event;
     /** The time at which the event should be triggered. */
     private long time;
 
@@ -44,7 +44,7 @@ public final class TimelineFrame<E extends TimelineEvent> implements Comparable<
      * @throws NullPointerException If the specified event is {@code null}.
      */
     TimelineFrame(long time, E event) {
-        this.event = Objects.requireNonNull(event, "Event cannot be null.");
+        setEvent(event);
         setTime(time);
     }
 
@@ -83,6 +83,15 @@ public final class TimelineFrame<E extends TimelineEvent> implements Comparable<
     void setTime(long time) {
         if (time < 0) throw new IllegalArgumentException("Time cannot be negative.");
         this.time = time;
+    }
+
+    /**
+     * Sets the event stored at this timeframe to the specified event.
+     * @param event The event to store at this timeframe.
+     * @throws NullPointerException If the specified event is null.
+     */
+    void setEvent(E event) {
+        this.event = Objects.requireNonNull(event, "Event cannot be null.");
     }
 
     /** Triggers the specified event. Should only be called when the specified time is reached. */

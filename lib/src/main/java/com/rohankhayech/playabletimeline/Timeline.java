@@ -141,6 +141,26 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
     }
 
     /**
+     * Replaces the event at the specified timeframe with the specified event.
+     * @param timeframe The timeframe to replace the event at.
+     * @param event The event to replace the current event with.
+     * @throws NoSuchElementException If the specified timeframe is not part of this timeline.
+     * @throws NullPointerException If the specified timeframe or event are null.
+     */
+    protected void replaceEvent(TimelineFrame<E> timeframe, E event) {
+        Objects.requireNonNull(timeframe);
+        Objects.requireNonNull(event);
+
+        // Check the timeframe is part of this timeline.
+        if (stream().noneMatch(tf -> tf == timeframe)) throw new NoSuchElementException("Specified timeframe is not owned by this timeline.");
+
+        // Replace the event and notify listeners.
+        notifyBeforeEventModified(timeframe.getTime(), timeframe.getEvent());
+        timeframe.setEvent(event);
+        notifyEventModified(timeframe.getTime(), event);
+    }
+
+    /**
      * Removes the first (or all if {@code removeAll} is true) event meeting the given condition. 
      * @param condition A predicate that determines whether the given event should be removed.
      * @param removeAll Whether to remove all events meeting the criteria or only the first.
@@ -475,7 +495,7 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
         long oldTime = timeframe.getTime();
         long oldDuration = getDuration();
 
-        // Shift the
+        // Shift the timeframe
         timeframe.setTime(time);
 
         // Sort the timeline.

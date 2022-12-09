@@ -25,6 +25,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
@@ -52,7 +53,7 @@ public class TimelineTest {
 
     /** Listener callback checks. */
     private boolean notifiedBeforeTLChanged, notifiedTLChanged, notifiedEventAdded, notifiedEventInserted,
-        notifiedEventRemoved, notifiedDurationChanged, notifiedTLCleared;
+        notifiedEventRemoved, notifiedDurationChanged, notifiedTLCleared, notifiedEventChanged, notifiedBeforeEventChanged;
 
     /** Event shifted callback checks */
     private Map<TimelineEvent, Boolean> notifiedShifted;
@@ -97,6 +98,8 @@ public class TimelineTest {
             @Override public void onDurationChanged(long od, long nd) { notifiedDurationChanged = true; }
             @Override public void onTimelineCleared() { notifiedTLCleared = true; }
             @Override public void onEventShifted(long oldT, long newT, TimelineEvent ev) { notifiedShifted.put(ev, true); }
+            @Override public void beforeEventModified(long t, TimelineEvent e) { notifiedBeforeEventChanged = true; }
+            @Override public void onEventModified(long t, TimelineEvent e) { notifiedEventChanged = true; }
         });
     }
 
@@ -602,6 +605,28 @@ public class TimelineTest {
         assertThrows("Did not throw exception when timeframe that is not part of tl.", NoSuchElementException.class, ()->tl.shift(other_tf, 10));
         assertEquals("Shifted timeframe that is not part of tl.", 0, tf.getTime());
         assertThrows("Did not throw exception when time is less than 0.", NoSuchElementException.class, ()->tl.shift(other_tf, -1));
+        assertThrows("Did not throw exception when timeframe is null.", NullPointerException.class, () -> tl.shift(null, 1));
+    }
+
+    @Test
+    public void testReplaceEvent() {
+        addDefaultEvents();
+
+        // Test valid.
+        TimelineFrame<TimelineEvent> tf = tl.toList().get(2);
+        tl.replaceEvent(tf, halfEvent);
+        assertSame("Event not replaced", halfEvent, tl.get(tf.getTime()));
+
+        // Check listener notifications.
+        assertTrue("No notification before timeline changed.", notifiedBeforeEventChanged);
+        assertTrue("No notification of timeline changed.", notifiedEventChanged);
+
+        // Test invalid
+        TimelineFrame<TimelineEvent> other_tf = new TimelineFrame<>(0, () -> {
+        });
+        assertThrows("Did not throw exception when timeframe that is not part of tl.", NoSuchElementException.class, () -> tl.replaceEvent(other_tf, halfEvent));
+        assertThrows("Did not throw exception when event is null.", NullPointerException.class, () -> tl.replaceEvent(other_tf, null));
+        assertThrows("Did not throw exception when timeframe is null.", NullPointerException.class, () -> tl.replaceEvent(null, halfEvent));
     }
 
     // Helper Methods
@@ -618,5 +643,7 @@ public class TimelineTest {
         notifiedDurationChanged = false;
         notifiedTLCleared = false;
         notifiedShifted = new HashMap<>(3);
+        notifiedBeforeEventChanged = false;
+        notifiedEventChanged = false;
     }
 }

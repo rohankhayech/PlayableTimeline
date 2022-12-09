@@ -83,22 +83,22 @@ public class TimelineMap<E extends TimelineEvent> extends Timeline<E> {
     }
 
     /**
-     * Replaces the event at the specified time, only if there is currently an event placed on the timeline at this time.
+     * Replaces the event at the specified time, only if there is currently an event
+     * placed on the timeline at this time.
      *
-     * @param time  The time at which to replace the event, in the timeline's specified units.
+     * @param time  The time at which to replace the event, in the timeline's
+     *              specified units.
      * @param event The timeline event to replace the existing event with.
      *
      * @throws IllegalArgumentException If the specified time is less than 0.
-     * @throws NullPointerException If the specified event is {@code null}.
-     * @throws IllegalStateException If the modification operation is prevented by an object using the timeline.
+     * @throws NullPointerException     If the specified event is {@code null}.
+     * @throws IllegalStateException    If the modification operation is prevented
+     *                                  by an object using the timeline.
      */
     public void replaceEvent(long time, E event) {
-        Objects.requireNonNull(event);
-
-        if (existsAt(time)) {
-            super.removeAll(time);
-            addEvent(time, event);
-        }
+        TimelineFrame<E> tf = stream().filter(f->f.getTime()==time).findFirst()
+            .orElseThrow(()->new NoSuchElementException("There is no event present at the specified timestamp."));
+        super.replaceEvent(tf, event);
     }
 
     /**
@@ -226,7 +226,29 @@ public class TimelineMap<E extends TimelineEvent> extends Timeline<E> {
 
         // Merge duplicates.
         for (Map.Entry<Long, E> entry : merged.entrySet()) {
-            replaceEvent(entry.getKey(), entry.getValue());
+            replaceAll(entry.getKey(), entry.getValue());
+        }
+    }
+
+    /**
+     * Replaces all events at the specified time, only if there is currently an event
+     * placed on the timeline at this time.
+     *
+     * @param time  The time at which to replace the event, in the timeline's
+     *              specified units.
+     * @param event The timeline event to replace the existing event with.
+     *
+     * @throws IllegalArgumentException If the specified time is less than 0.
+     * @throws NullPointerException     If the specified event is {@code null}.
+     * @throws IllegalStateException    If the modification operation is prevented
+     *                                  by an object using the timeline.
+     */
+    private void replaceAll(long time, E event) {
+        Objects.requireNonNull(event);
+
+        if (existsAt(time)) {
+            super.removeAll(time);
+            addEvent(time, event);
         }
     }
 }
