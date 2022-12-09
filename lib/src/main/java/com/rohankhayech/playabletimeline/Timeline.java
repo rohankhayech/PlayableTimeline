@@ -484,8 +484,11 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      * @throws NoSuchElementException If the timeframe is not part of this timeline.
      * @throws IllegalArgumentException If the specified time is less than 0.
      * @throws IllegalStateException If the modification operation is prevented by an object using the timeline.
+     * @throws NullPointerExcepton If the timeframe is null.
      */
     public void shift(TimelineFrame<E> timeframe, long time) {
+        Objects.requireNonNull(timeframe);
+
         // Check the specified frame is owned by this timeline and that time is valid.
         if (stream().noneMatch(tf->tf==timeframe)) throw new NoSuchElementException("Specified timeframe is not owned by this timeline.");
         if (time < 0) throw new IllegalArgumentException("Cannot shift timeframe to a negative timestamp.");
