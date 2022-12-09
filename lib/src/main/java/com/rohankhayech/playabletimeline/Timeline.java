@@ -484,7 +484,7 @@ public class Timeline<E extends TimelineEvent> implements Iterable<TimelineFrame
      * @throws NoSuchElementException If the timeframe is not part of this timeline.
      * @throws IllegalArgumentException If the specified time is less than 0.
      * @throws IllegalStateException If the modification operation is prevented by an object using the timeline.
-     * @throws NullPointerExcepton If the timeframe is null.
+     * @throws NullPointerException If the timeframe is null.
      */
     public void shift(TimelineFrame<E> timeframe, long time) {
         Objects.requireNonNull(timeframe);
