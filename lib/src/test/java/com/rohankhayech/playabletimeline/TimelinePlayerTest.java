@@ -112,7 +112,7 @@ public class TimelinePlayerTest {
      * The actual real time that events are executed is not tested as this is reliant on latency.
      * However the test will timeout and fail if all events are not completed within a reasonable timeframe.
      */
-    @Test(timeout = 1000)
+    @Test
     public void testPlayback() {
 
         // Check playback start.

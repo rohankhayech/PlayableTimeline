@@ -268,12 +268,9 @@ public class TimelinePlayer<E extends TimelineEvent> implements Closeable {
                             notifyPlayheadUpdated();
                         }
 
-
-
                         // Calculate delta time offset
                         long deltaTime = System.nanoTime() - startTime;
                         long waitTime = getWaitTime(deltaTime);
-
 
                         // Wait one unit (accounting for deltatime) before checking the next timeframe.
                         TimeUnit.NANOSECONDS.sleep(waitTime);

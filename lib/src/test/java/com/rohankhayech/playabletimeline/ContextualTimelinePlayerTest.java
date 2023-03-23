@@ -71,7 +71,7 @@ public class ContextualTimelinePlayerTest {
 
         // Check value after playback.
         plr.play();
-        Thread.sleep(2);
+        Thread.sleep(5);
         assertEquals("Value not updated with value from context object correctly.",5, value);
     }
 

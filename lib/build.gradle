@@ -20,6 +20,5 @@ dependencies {
 
 test {
     useJUnit()
-
     maxHeapSize = '1G'
 }
