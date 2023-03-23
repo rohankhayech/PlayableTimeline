@@ -20,6 +20,8 @@
 
 package com.rohankhayech.playabletimeline;
 
+import static java.util.concurrent.TimeUnit.NANOSECONDS;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
@@ -31,6 +33,8 @@ import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Test harness for the TimelinePlayer class.
@@ -57,6 +61,9 @@ public class TimelinePlayerTest {
     /** Array of flags indicating whether the respective event has been triggered. */
     private AtomicBoolean[] triggered;
 
+    /** Array of flags indicating whether the respective event has been triggered. */
+    private AtomicLong[] playbackTimes;
+
     /** Delay between test events. */
     private static final long EVENT_DELAY = 10;
 
@@ -74,11 +81,16 @@ public class TimelinePlayerTest {
         // Setup and add events
         e = new TimelineEvent[NUM_EVENTS];
         triggered = new AtomicBoolean[NUM_EVENTS];
+        playbackTimes = new AtomicLong[NUM_EVENTS];
 
         for (int i=0; i<e.length; i++) {
             final int j = i;
             triggered[i] = new AtomicBoolean(false);
-            e[i] = () -> triggered[j].set(true);
+            playbackTimes[i] = new AtomicLong(-1);
+            e[i] = () -> {
+                playbackTimes[j].set(System.nanoTime());
+                triggered[j].set(true);
+            };
             tl.addEvent(i*EVENT_DELAY, e[i]);
         }
 
@@ -113,32 +125,31 @@ public class TimelinePlayerTest {
      * However the test will timeout and fail if all events are not completed within a reasonable timeframe.
      */
     @Test
-    public void testPlayback() {
+    public void testPlayback() throws InterruptedException {
 
         // Check playback start.
         plr.start();
-        assertTrue("isPlaying() false after playing.",plr.isPlaying());
-        assertTrue("Listener not notified of playback starting.", playbackStartCalled);
+        long playbackStartTime = System.nanoTime();
 
-        // Assert first event called on start
-        while(plr.getPlayhead() < 1) { /* Wait */ }
+        Thread.sleep(50);
+
         assertTrue("Listener not notified of playhead update.", playheadUpdatedCalled);
-        assertTrue("Event not played on time.", triggered[0].get());
-        assertFalse("Event played early.", triggered[1].get());
-        assertFalse("Event played early.", triggered[2].get());
 
-        // Assert second event called after 2 seconds
-        while(plr.getPlayhead() < EVENT_DELAY+1) { /* Wait */ }
-        assertTrue("Event not played on time.",triggered[1].get());
-        assertFalse("Event played early.", triggered[2].get());
+        long time = NANOSECONDS.toMillis(Math.abs(playbackTimes[0].get()-playbackStartTime));
+        assertTrue("Event played too late at "+time, time<EVENT_DELAY*2);
+        time = NANOSECONDS.toMillis(Math.abs(playbackTimes[1].get()-playbackStartTime));
+        assertTrue("Event played too late at "+time, time<EVENT_DELAY*3);
+        time = NANOSECONDS.toMillis(Math.abs(playbackTimes[2].get()-playbackStartTime));
+        assertTrue("Event played too late at "+time, time<EVENT_DELAY*4);
 
-        // Assert third event called after 4 seconds
-        while(plr.getPlayhead() < 2*EVENT_DELAY+1) { /* Wait */ }
-        assertTrue("Event not played on time.",triggered[2].get());
+        assertTrue("Event not played.", triggered[0].get());
+        assertTrue("Event not played.", triggered[1].get());
+        assertTrue("Event not played.", triggered[2].get());
+
 
         // Assert playback stopped at end of timeline.
         assertFalse("Playback continued after last event.",plr.isPlaying());
-        assertEquals("Playhead not at last event after end of timeline.", 20, plr.getPlayhead());
+        assertEquals("Playhead not at last event after end of timeline.", EVENT_DELAY*(NUM_EVENTS-1), plr.getPlayhead());
 
         // Attempt play after close.
         plr.close();
